@@ -88,7 +88,7 @@ the real explanation lives in the chapter itself.
 | Port | A number identifying a specific transport-layer communication endpoint on a host. | Ch. 12 |
 | Source port | The port number a sending process used, carried in a transport-layer packet header. | Ch. 12 |
 | Destination port | The port number a receiving process is expected to be listening on, carried in a transport-layer packet header. | Ch. 12 |
-| Five-tuple | The combination of source IP, source port, destination IP, destination port, and protocol that uniquely identifies one conversation at a given moment. | Ch. 12 |
+| Five-tuple | The combination of source IP, source port, destination IP, destination port, and protocol that identifies one transport flow — and, for TCP, one established connection — within a given network context at a given moment. | Ch. 12 |
 | Socket | The operating system's handle for a transport-layer endpoint — a full five-tuple's worth once a TCP conversation is established, but not every socket has a fixed remote endpoint (a listening TCP socket or unconnected UDP socket doesn't). | Ch. 12 |
 | Demultiplexing | Using an incoming packet's five-tuple (or, for a listening socket with no five-tuple yet, its port/protocol/local-address binding) to determine which process should receive it. | Ch. 12 |
 | UDP | User Datagram Protocol — a minimal, connectionless transport protocol that sends independent datagrams with no delivery guarantees. | Ch. 13 |

@@ -28,6 +28,15 @@ Per-chapter citation trail (blueprint.md §19).
   (kubernetes.io/docs/concepts/services-networking/ingress/,
   .../ingress-controllers/) — source for the Ingress-object-vs.-
   ingress-controller distinction.
+- ingress-nginx documentation (kubernetes.github.io/ingress-nginx) — a
+  real, widely-deployed controller that builds its own routing table
+  directly from Service/Endpoints/EndpointSlice state and forwards
+  straight to pod IPs, deliberately bypassing the Service's ClusterIP
+  and kube-proxy's data plane. The source for this chapter's fourth-pass
+  correction that the virtual-address-plus-data-plane path is one real,
+  common controller pattern — the one this chapter's worked example and
+  diagram follow — not the only way Ingress configuration gets
+  implemented.
 - Linux kernel `namespaces(7)` man page — the underlying OS mechanism
   implementing network namespaces.
 
@@ -83,3 +92,17 @@ Per-chapter citation trail (blueprint.md §19).
   the traditional sidecar model at the conceptual level only — their
   actual mechanics (shared node-level proxies, per-pod traffic redirection
   without a dedicated sidecar container) are not explained.
+- Fourth-pass note on terminology: a fourth-pass review suggested
+  "ready" in place of "healthy" throughout, matching Kubernetes'
+  specific readinessProbe/livenessProbe distinction. Not adopted: this
+  chapter deliberately stays platform-generic (it names Kubernetes only
+  once, in a misconception heading quoting a real claim people make) and
+  reuses "healthy," the term Chapter 22 already established for the same
+  concept in a platform-agnostic load-balancing context — introducing
+  Kubernetes-specific readiness/liveness terminology here would be more
+  platform-specific, not less, and would diverge from Chapter 22's own
+  vocabulary without a clear teaching benefit at this book's level of
+  detail. The distinction itself (a live process versus one actually
+  ready for traffic) may be worth a brief explicit mention in a later
+  editorial pass, kept for now as a scoped-out judgment call rather than
+  an oversight.

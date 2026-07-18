@@ -8,7 +8,9 @@ Per-chapter citation trail (blueprint.md §19).
 - RFC 9293 §3.1 — TCP's own definition of a connection as identified by a socket pair; also the source for this chapter's second-pass correction that a listening socket (§3.3.1, LISTEN state) is bound to a local address/port only, with no remote endpoint yet — the narrower "one endpoint of a five-tuple" framing only describes an established connection's socket.
 - RFC 768 (already cited Ch. 13) — UDP's connectionless model, the source for this chapter's note that a UDP socket may remain unconnected, with no fixed remote endpoint at all.
 - RFC 3234 and common firewall/NAT literature — "five-tuple" (source IP, source port, destination IP, destination port, protocol) is the standard industry term for what this chapter calls the tuple; used consistently in place of an invented "connection tuple."
-- RFC 792 (already cited Ch. 10) — the source for this chapter's third-pass correction that ports are specifically a UDP/TCP concept, not a universal property of everything above IP: ICMP carries no port numbers at all.
+- RFC 792 (already cited Ch. 10) — the source for this chapter's third-pass correction that ICMP, unlike UDP and TCP, carries no port numbers at all.
+- RFC 9293 §3.1 (already cited above) and RFC 768 §2 (already cited above) — jointly the source for this chapter's fourth-pass correction narrowing "port is specifically a UDP/TCP concept" (an overclaim — other transport protocols like SCTP and DCCP, not covered by this book, also use ports) to the more defensible claim actually needed here: UDP and TCP, the two transport protocols this book covers, both use ports, and not everything carried by IP does (ICMP doesn't).
+- RFC 9293 §3.3.1 (already cited above) and RFC 768's connectionless model (already cited above) — jointly the source for this chapter's fourth-pass correction scoping the five-tuple's uniqueness claim: a five-tuple identifies one established connection precisely for TCP, but UDP's connectionless model means the same five values can carry more than one independent exchange without any connection having "ended" to free them up.
 
 ## Historical sources
 

@@ -7,6 +7,38 @@ Each chapter's own drafting pass should get an entry here.
 
 ### Fixed
 
+- Addressed a fourth-pass technical review's 6 remaining findings across
+  Chapters 12, 20, 24, and 27: fixed a What to Remember bullet in
+  Chapter 12 that still stated the exact "every transport-layer packet
+  has ports" overgeneralization its own corrected body text had already
+  removed, and softened the five-tuple's uniqueness claim to account for
+  UDP's connectionless model (a five-tuple identifies one established
+  connection precisely for TCP, but can carry more than one independent
+  UDP exchange without anything having "ended" first); scoped Chapter
+  20's "everything is encrypted and integrity-protected" after TLS setup
+  to the HTTP data specifically, consistent with Chapter 18's own
+  metadata-visibility treatment; replaced Chapter 24's two remaining
+  "independent per-stream loss recovery" / "isolate loss between
+  application streams" phrases (in the HTTP/3 paragraph, the diagram/
+  footer description, and — after three review passes kept finding this
+  exact phrase — the chapter's own Key Takeaway sentence, the one
+  deliberate departure from blueprint.md's verbatim wording in the
+  manuscript, documented as such in the chapter's references file) with
+  language matching the corrected mechanism: independent stream
+  *ordering and delivery*, not independent *loss recovery*; and reworked
+  Chapter 27's Ingress worked example, technical explanation, diagram,
+  and alt text to stop presenting one controller implementation
+  (routing through a Service's virtual address) as the only path real
+  ingress controllers take — some, like ingress-nginx, route straight to
+  pod endpoints instead, bypassing the virtual address entirely. Updated
+  `glossary.md` (five-tuple) and 4 `references/chapter-NN.md` files with
+  primary sources (RFC 9293 §3.3.1, RFC 768 §2, RFC 9000 §2, ingress-nginx
+  docs) backing each correction, including an explicit rationale entry
+  for the Chapter 24 blueprint deviation and for declining one suggested
+  "healthy"→"ready" terminology change in Chapter 27 (judged more
+  Kubernetes-specific, not less, for a deliberately platform-agnostic
+  chapter). All four structural validators still pass clean.
+
 - Addressed a third-pass technical review's 8 remaining findings across
   Chapters 10, 12, 19, 20, 22, 24, and 27: IPv6's sending-endpoint
   fragmentation clarified as a real (if rarely used) capability via the

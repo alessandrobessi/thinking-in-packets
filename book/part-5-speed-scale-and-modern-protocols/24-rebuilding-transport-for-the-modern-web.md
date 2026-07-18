@@ -44,7 +44,7 @@ Within one QUIC connection, multiple **independent streams** can be open concurr
 
 QUIC also integrates encryption (Chapter 18's TLS, specifically TLS 1.3) directly into its handshake and treats most of its own transport-level control information — not just application payload — as **encrypted transport metadata**, protecting far more of the exchange from casual observation or tampering by a network intermediary than TCP's traditionally unencrypted header ever did. One practical consequence: because the connection setup and cryptographic handshake are combined rather than sequential, a QUIC connection to a server the client has recently talked to before can, under the right conditions, begin sending application data immediately alongside its very first handshake message — an intuition usually called **zero-round-trip (0-RTT) resumption**. This early-data capability itself actually comes from TLS 1.3, not from QUIC specifically — a plain TCP connection using TLS 1.3 resumption can send early data before its own handshake finishes too, on an ordinary TCP-then-TLS connection. What QUIC's combined setup adds on top is removing the *separate* round trip a fresh TCP-then-TLS connection historically needed purely to establish the transport connection itself, before TLS's own handshake (with or without resumption) could even begin.
 
-**HTTP/3** is the version of HTTP built to run over QUIC rather than TCP — carrying forward HTTP/2's multiplexed-streams model, but now benefiting from QUIC's genuinely independent per-stream loss recovery and connection migration underneath, closing the gap Chapter 23 identified.
+**HTTP/3** is the version of HTTP built to run over QUIC rather than TCP — carrying forward HTTP/2's multiplexed-streams model, but now benefiting from QUIC's independent per-stream ordering and delivery underneath (removing the cross-stream head-of-line blocking Chapter 23 identified, though not full independence — loss detection and congestion response still operate at the connection level, as this chapter's Technical Explanation covers), plus connection migration.
 
 ```mermaid
 sequenceDiagram
@@ -113,7 +113,7 @@ When a product claims to use QUIC or HTTP/3, the concrete benefits to expect are
 
 ## Key Takeaway
 
-**QUIC builds reliable, secure, multiplexed transport in user space over UDP so it can evolve faster and isolate loss between application streams.**
+**QUIC builds reliable, secure, multiplexed transport over UDP so it can evolve faster and keep one stream's loss from blocking delivery on unrelated streams.**
 
 ## What to Remember
 
@@ -138,4 +138,4 @@ When a product claims to use QUIC or HTTP/3, the concrete benefits to expect are
 
 **Concept-graph entries checked off:** quic, http3, connection-migration, zero-rtt-resumption → update `/concept-graph.yaml`, regenerate `/concept-graph.md`
 
-**Diagrams used this chapter:** sequence (connection migration and independent per-stream loss recovery) → satisfies style-guide.md §4
+**Diagrams used this chapter:** sequence (connection migration and independent per-stream ordering/delivery, with the connection-wide congestion caveat) → satisfies style-guide.md §4

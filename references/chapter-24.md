@@ -28,6 +28,7 @@ Per-chapter citation trail (blueprint.md §19).
 - RFC 8446 (*TLS 1.3*, 2018) §8, *0-RTT and Anti-Replay* — the source for this chapter's 0-RTT replay-vulnerability correction: 0-RTT data lacks the forward-secrecy/freshness guarantee of data sent after a full handshake, so applications must restrict it to operations safe to (potentially) execute more than once.
 - RFC 8446 §2.3, *0-RTT Data* — the source for this chapter's third-pass correction that 0-RTT early-data resumption is itself a TLS 1.3 capability, usable over plain TCP, not something QUIC invented by combining its handshake steps.
 - RFC 9002 §5 (*Congestion Control*, already cited above) — the specific source for this chapter's third-pass correction that a stream being "not blocked" by an unrelated stream's loss is narrower than "unaffected": a shrinking connection-wide congestion window after loss can still reduce every stream's available sending rate.
+- RFC 9000 §2 (*Streams*) — the source for this chapter's fourth-pass correction that QUIC provides independent per-stream *ordering and delivery*, not independent per-stream *loss recovery*; loss detection and retransmission scheduling remain connection-wide (RFC 9002), only the resulting stream data delivery is independent.
 
 ## Historical sources
 
@@ -73,3 +74,19 @@ Per-chapter citation trail (blueprint.md §19).
   Explanation's multi-stream-per-packet nuance; the underlying frame/
   packet-number accounting (RFC 9000 §13) is still not derived
   mechanically, per blueprint scope.
+- Fourth-pass deviation from blueprint.md §11: this chapter's Key
+  Takeaway sentence has been edited from the blueprint's original
+  verbatim wording ("...so it can evolve faster and isolate loss between
+  application streams") to "...so it can evolve faster and keep one
+  stream's loss from blocking delivery on unrelated streams," and drops
+  "in user space" (already softened elsewhere in this chapter to
+  "commonly implemented in user space," not a defining property). Three
+  successive technical reviews converged on "isolate loss" as a
+  persistent overclaim even after every surrounding section was
+  corrected; leaving the chapter's single most memorable sentence
+  technically imprecise while the rest of the chapter carefully hedges
+  the same claim was judged worse than a one-sentence departure from
+  verbatim blueprint wording. This is the only Key Takeaway in the
+  manuscript altered from its blueprint source; style-guide.md §2's
+  "match blueprint.md §11" rule should be read as taking a back seat to
+  technical accuracy in cases like this one.

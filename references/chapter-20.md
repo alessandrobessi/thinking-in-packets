@@ -42,3 +42,10 @@ mechanism it introduced that this chapter traces end to end.
   client send early data before its handshake finishes even over plain
   TCP — RFC 8446 §2.3 (already cited Ch. 18/24), the source for this
   correction.
+- Fourth-pass correction: step 9 previously said "everything is
+  encrypted and integrity-protected" after TLS setup, without qualification.
+  Corrected to scope that protection to the HTTP data carried inside the
+  session specifically, consistent with Chapter 18's own "encryption
+  hides all network metadata" misconception treatment (destination IP,
+  port, timing, size, and often SNI remain visible) — this chapter had
+  briefly lost a nuance Chapter 18 already carefully established.
