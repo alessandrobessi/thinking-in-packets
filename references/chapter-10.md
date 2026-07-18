@@ -8,8 +8,9 @@ Per-chapter citation trail (blueprint.md §19).
 - RFC 4443, *Internet Control Message Protocol (ICMPv6)*, IETF, 2006.
 - RFC 791, *Internet Protocol* (source of the IPv4 TTL field and in-transit fragmentation behavior; already cited Ch. 6).
 - RFC 8200, *Internet Protocol, Version 6* (source of the IPv6 Hop Limit field and the no-in-transit-fragmentation rule; already cited Ch. 6).
-- RFC 1191, *Path MTU Discovery* (IPv4), IETF, 1990.
+- RFC 1191, *Path MTU Discovery* (IPv4), IETF, 1990 — §1 defines MTU as a property of the largest IP datagram a link can carry, the source for this chapter's frame-vs-packet MTU correction.
 - RFC 8201, *Path MTU Discovery for IP version 6*, IETF, 2017.
+- RFC 894, *A Standard for the Transmission of IP Datagrams over Ethernet Networks* — illustrates that a 1500-byte Ethernet MTU describes the IP datagram's maximum size, with the Ethernet frame itself (header plus that payload) being correspondingly larger.
 - RFC 4732, *Internet Denial-of-Service Considerations* §3 — background on ICMP rate-limiting as deliberate router/OS behavior, cited for this chapter's correction that ICMP generation is neither universal nor guaranteed to arrive.
 - RFC 1812 §4.3.2.7 — router requirements around silently discarding packets under queue exhaustion, the source for this chapter's added third worked-example case (congestion-caused loss produces no ICMP message).
 

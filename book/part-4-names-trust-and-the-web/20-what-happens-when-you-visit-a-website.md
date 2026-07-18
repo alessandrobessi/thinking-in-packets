@@ -50,7 +50,7 @@ A page load is not one action. It is a long, ordered chain of smaller mechanisms
 
 ## Technical Explanation
 
-There is no new mechanism to explain here — that is the point of this chapter. What's worth being explicit about is the *shape* of the dependency chain, because it's not a strict, always-identical sequence for every request. Local configuration (step 2) genuinely must happen before anything else. DNS resolution (steps 3-7) must happen before transport state can be created, because transport needs a destination address, not just a hostname. Transport state (step 8) must exist before TLS (step 9) can run, since TLS is layered on top of an already-established TCP connection. And TLS must complete before HTTP (step 10) can send anything meaningful, since HTTP's request is itself protected data inside the TLS session.
+There is no new mechanism to explain here — that is the point of this chapter. What's worth being explicit about is the *shape* of the dependency chain, because it's not a strict, always-identical sequence for every request, and even its ordering constraints describe the conventional TCP-and-TLS path this chapter follows, not a universal law every possible design obeys. For that conventional path: local configuration (step 2) genuinely must happen before anything else. DNS resolution (steps 3-7) must happen before transport state can be created, because transport needs a destination address, not just a hostname. Transport state (step 8) must exist before TLS (step 9) can run, since TLS here is layered on top of an already-established TCP connection. And TLS must complete before HTTP (step 10) can send anything meaningful, since HTTP's request is itself protected data inside the TLS session. Chapter 24 shows a design where this specific ordering loosens: QUIC folds transport setup and its cryptographic handshake into one combined exchange rather than two strictly sequential ones, and can even let a returning client send application data alongside its very first handshake message. The dependency logic itself doesn't disappear — data still can't be meaningfully protected before a cryptographic handshake happens — but "transport step, then a separate TLS step" is this chapter's conventional path, not the only way to satisfy that logic.
 
 But within that dependency structure, real variation is normal, not exceptional: much of steps 2-4 may be skipped entirely if the laptop already holds valid configuration and cached neighbor information from moments earlier; step 7's DNS resolution may return instantly from cache rather than performing a fresh delegation walk; and step 10 in particular fans out into many parallel repetitions of steps 8-10 for the page's various embedded resources, not one single pass through the whole chain. The chain's *ordering constraints* are fixed; how much of the chain actually executes, and how many times, depends on what's already cached or already open.
 
@@ -64,7 +64,7 @@ This chapter *is* the checkpoint — there is no further scenario to return to b
 
 **Why it's wrong:** A numbered ten-step list, read start to finish, looks like it must always execute start to finish, in full, every time.
 
-**Correct intuition:** The dependency ordering (configuration before resolution, resolution before transport, transport before TLS, TLS before HTTP) is fixed, but many steps are conditionally skipped when cached state already satisfies them, and step 10 in particular repeats many times in parallel for a page's various resources.
+**Correct intuition:** For this chapter's conventional TCP-and-TLS path, the dependency ordering (configuration before resolution, resolution before transport, transport before TLS, TLS before HTTP) holds, but many steps are conditionally skipped when cached state already satisfies them, step 10 in particular repeats many times in parallel for a page's various resources, and — as Chapter 24 shows — not every transport design even keeps transport and TLS as two strictly separate sequential steps to begin with.
 
 **Analogy:** A recipe's steps have a fixed dependency order (you can't frost a cake before baking it), but a baker who already has batter prepared skips straight past the steps that produced it.
 
@@ -95,12 +95,12 @@ When troubleshooting "the site won't load," this ten-step chain is a genuinely u
 ## What to Remember
 
 - Local configuration (Ch. 7) must exist before anything else in the chain can run.
-- Address resolution (Ch. 8) and DNS resolution (Ch. 17) both must complete before a destination address is known, and both may be served from cache rather than freshly performed.
+- DNS resolution (Ch. 17) discovers the *remote* destination's IP address; address resolution (Ch. 8, ARP/Neighbor Discovery) separately discovers the *local* gateway's link-layer address — two different questions at two different layers, not the same lookup twice. Address resolution has to happen just to reach the gateway at all, even to send the DNS query itself; both may be served from cache rather than freshly performed.
 - Hop-by-hop forwarding (Ch. 9-11) happens for every packet in the exchange, invisibly to the browser, one local next-hop decision at a time.
 - Transport state (Ch. 12, 14-15) must be established before TLS (Ch. 18) can run on top of it.
 - TLS must complete before HTTP (Ch. 19) can send anything meaningful, since HTTP's request is itself protected data inside the session.
 - A single perceived page load fans out into many parallel repetitions of the transport-through-HTTP steps for its embedded resources.
-- The chain's dependency order is fixed; how much of it actually executes on a given request depends heavily on what's already cached, leased, or still open.
+- This chain's dependency order describes the conventional TCP-and-TLS path; how much of it actually executes on a given request depends heavily on what's already cached, leased, or still open, and Chapter 24 shows a design (QUIC) that combines steps this chapter treats as strictly sequential.
 
 ## The Next Obvious Question
 

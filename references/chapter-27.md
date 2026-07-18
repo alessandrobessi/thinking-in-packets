@@ -40,6 +40,12 @@ Per-chapter citation trail (blueprint.md §19).
   implementations) documentation illustrates sidecar-proxy architecture
   generically; the chapter deliberately doesn't endorse or describe one
   specific implementation's configuration.
+- Istio's *Sidecars and Ambient* / dataplane-modes documentation
+  (istio.io/latest/docs/overview/dataplane-modes/) — source for this
+  chapter's second-pass correction that sidecarless/ambient mesh
+  architectures exist alongside the traditional per-pod sidecar model,
+  both achieving the same uniform-control category through different
+  proxy placement.
 
 ## Empirical claims
 
@@ -68,3 +74,7 @@ Per-chapter citation trail (blueprint.md §19).
   one specific platform's exact API naming (Kubernetes' `Ingress` object
   is the concrete example, but the object/controller split generalizes to
   other platforms using different names).
+- Ambient/sidecarless mesh architectures are named and distinguished from
+  the traditional sidecar model at the conceptual level only — their
+  actual mechanics (shared node-level proxies, per-pod traffic redirection
+  without a dedicated sidecar container) are not explained.

@@ -18,7 +18,19 @@ mechanism it introduced that this chapter traces end to end.
   browsers issue some steps (e.g. speculative DNS prefetching, parallel
   connection warm-up) earlier or more eagerly than a strictly linear
   reading of the ten steps would suggest. The dependency *constraints*
-  described in this chapter's Technical Explanation are accurate; the
-  exact scheduling/eagerness of real browser implementations is
-  intentionally left unspecified, as implementation detail beyond this
-  chapter's scope.
+  described in this chapter's Technical Explanation are accurate for the
+  conventional TCP-and-TLS path this chapter follows; the exact
+  scheduling/eagerness of real browser implementations is intentionally
+  left unspecified, as implementation detail beyond this chapter's scope.
+- Second-pass correction: the Technical Explanation and What to Remember
+  now explicitly scope the "transport before TLS, TLS before HTTP"
+  ordering to this chapter's conventional TCP-and-TLS path, with a
+  forward pointer to Chapter 24 (QUIC combines transport and
+  cryptographic handshakes rather than keeping them strictly sequential)
+  — see RFC 9000/9001, already cited in Chapter 24's own references.
+- Second-pass correction: step 4 (address resolution, ARP/Neighbor
+  Discovery) and step 7 (DNS resolution) were previously conflated in
+  the What to Remember summary as both "resolving the destination
+  address" — corrected to state they resolve different things (a local
+  link-layer next hop vs. a remote IP address) at different layers,
+  consistent with Chapter 8's own treatment.

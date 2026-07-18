@@ -10,6 +10,7 @@ Per-chapter citation trail (blueprint.md §19).
 - RFC 3234, *Middleboxes: Taxonomy and Issues* — the general middlebox taxonomy this chapter's terminology follows.
 - RFC 4787, *NAT Behavioral Requirements for Unicast UDP* — background on NAT mapping/filtering behavior (used only for general framing, not cited for configuration detail).
 - RFC 6890, *Special-Purpose IP Address Registries* — catalogues loopback, link-local, documentation, and other special-purpose ranges that are neither private nor globally reachable public, the source for this chapter's correction away from a strict private/public binary.
+- RFC 8446 (*TLS 1.3*, already cited Ch. 18) — the source for this chapter's second-pass correction that a VPN server removing its own tunnel encryption does not remove a separate, end-to-end TLS layer (e.g. HTTPS) already protecting content inside the tunnel; the VPN server never holds that separate layer's key.
 
 ## Historical sources
 

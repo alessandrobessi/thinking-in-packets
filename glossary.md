@@ -71,7 +71,7 @@ the real explanation lives in the chapter itself.
 | Best-effort delivery | IP's core contract: a genuine attempt at delivery, with no guarantee of arrival, single delivery, or order. | Ch. 10 |
 | TTL / Hop Limit | A packet-header field decremented at every router hop, causing the packet to be discarded once it reaches zero. | Ch. 10 |
 | ICMP | Internet Control Message Protocol — the mechanism IP uses to report failures (like TTL expiry or unreachable destinations) back to a packet's sender. | Ch. 10 |
-| MTU | Maximum Transmission Unit — the largest frame size a given link can carry. | Ch. 10 |
+| MTU | Maximum Transmission Unit — the largest IP packet a given link can carry without IP-layer fragmentation. | Ch. 10 |
 | Path MTU | The smallest MTU among all the links on a packet's path, constraining how large a packet can travel that whole path. | Ch. 10 |
 | Fragmentation | Splitting a packet into smaller pieces to fit a link's MTU; performed by routers in transit in IPv4, only by the sending endpoint in IPv6. | Ch. 10 |
 | Packet loss | A packet failing to reach its destination — an expected, normal possibility under IP's best-effort contract. | Ch. 10 |
@@ -88,9 +88,9 @@ the real explanation lives in the chapter itself.
 | Port | A number identifying a specific transport-layer communication endpoint on a host. | Ch. 12 |
 | Source port | The port number a sending process used, carried in a transport-layer packet header. | Ch. 12 |
 | Destination port | The port number a receiving process is expected to be listening on, carried in a transport-layer packet header. | Ch. 12 |
-| Five-tuple | The combination of source IP, source port, destination IP, destination port, and protocol that uniquely identifies one conversation. | Ch. 12 |
-| Socket | The operating system's handle representing one endpoint of a specific connection tuple. | Ch. 12 |
-| Demultiplexing | Using an incoming packet's connection tuple (or destination port) to determine which process should receive it. | Ch. 12 |
+| Five-tuple | The combination of source IP, source port, destination IP, destination port, and protocol that uniquely identifies one conversation at a given moment. | Ch. 12 |
+| Socket | The operating system's handle for a transport-layer endpoint — a full five-tuple's worth once a TCP conversation is established, but not every socket has a fixed remote endpoint (a listening TCP socket or unconnected UDP socket doesn't). | Ch. 12 |
+| Demultiplexing | Using an incoming packet's five-tuple (or destination port) to determine which process should receive it. | Ch. 12 |
 | UDP | User Datagram Protocol — a minimal, connectionless transport protocol that sends independent datagrams with no delivery guarantees. | Ch. 13 |
 | Datagram | One self-contained unit of data sent independently by UDP, with no relationship tracked to any other datagram. | Ch. 13 |
 | Message boundary | The edges of one application-level send, preserved intact by UDP but not by TCP's byte stream. | Ch. 13 |
@@ -171,10 +171,10 @@ the real explanation lives in the chapter itself.
 | CDN (content delivery network) | Globally distributed infrastructure that caches content near users and shields the origin from most traffic. | Ch. 22 |
 | Edge location | A point of presence, physically near a cluster of users, that holds cached copies of content on a CDN's behalf. | Ch. 22 |
 | Origin | The server that actually owns, and when needed generates, the content a CDN's edge locations cache. | Ch. 22 |
-| Load balancer | A component that sits in front of a pool of interchangeable backend servers and decides which one handles each incoming request. | Ch. 22 |
+| Load balancer | A component that sits in front of a pool of interchangeable backend servers and decides which one handles incoming work — per request at the application layer, or more commonly per connection/flow at the transport layer. | Ch. 22 |
 | Health check | A load balancer's periodic probe that removes a failing or overloaded backend from rotation automatically. | Ch. 22 |
 | Replication | Running multiple copies of a service or its data, for both capacity and resilience. | Ch. 22 |
-| Affinity (session stickiness) | A load-balancing policy that routes a given user's repeated requests to the same backend. | Ch. 22 |
+| Affinity (session stickiness) | A load-balancing policy that routes a given user's repeated requests to the same backend, so instance-local state stays reachable — it sidesteps cross-replica inconsistency for that user's traffic, it doesn't create consistency across replicas generally. | Ch. 22 |
 | Anycast | A routing technique where the same IP address is announced from multiple locations, and routing delivers each user to the closest one. | Ch. 22 |
 | Connection reuse | Sending more than one request over a single already-established connection instead of opening a new one per request. | Ch. 23 |
 | Pipelining (intuition) | An earlier technique of sending several requests on a reused connection without waiting for each response, still constrained to in-order responses. | Ch. 23 |
@@ -185,10 +185,10 @@ the real explanation lives in the chapter itself.
 | Head-of-line blocking | A lost or delayed unit blocking delivery of unrelated data queued behind it in the same ordered stream. | Ch. 23 |
 | QUIC | A transport protocol implementing reliable, ordered, congestion-controlled delivery as user-space software over UDP. | Ch. 24 |
 | HTTP/3 | The version of HTTP built to run over QUIC instead of TCP. | Ch. 24 |
-| User-space transport | Transport logic running as ordinary application-level software rather than inside the operating system kernel. | Ch. 24 |
+| User-space transport | Transport logic running as ordinary application-level software rather than inside the operating system kernel — QUIC's common, but not strictly required, deployment style. | Ch. 24 |
 | Connection ID | A value QUIC endpoints choose to identify a connection, independent of IP address or port. | Ch. 24 |
 | Connection migration | A QUIC connection continuing across a network change (e.g. Wi-Fi to cellular) without being torn down and rebuilt. | Ch. 24 |
-| Independent streams (QUIC) | Multiple concurrent streams within one QUIC connection, each with its own delivery and loss-recovery state at the transport layer. | Ch. 24 |
+| Independent streams (QUIC) | Multiple concurrent streams within one QUIC connection, each with its own delivery order at the transport layer, though loss detection and congestion response operate at the connection level. | Ch. 24 |
 | Encrypted transport metadata | Transport-level control information QUIC encrypts alongside application payload, beyond what TCP traditionally protects. | Ch. 24 |
 | Zero-round-trip (0-RTT) resumption | A returning client sending application data immediately alongside its first handshake message, under specific prior-connection conditions; that first flight is more vulnerable to replay than data sent after a full handshake. | Ch. 24 |
 | Timeliness | How much a piece of data's usefulness depends on arriving promptly. | Ch. 25 |
@@ -218,7 +218,7 @@ the real explanation lives in the chapter itself.
 | Egress | Traffic actually crossing a cluster's or service's outer boundary outbound, often subject to its own policy and routing — distinct from east-west traffic. | Ch. 27 |
 | East-west traffic | Service-to-service traffic within the same boundary, as distinct from north-south traffic crossing that boundary (ingress/egress). | Ch. 27 |
 | Sidecar proxy | A proxy deployed alongside one pod's application container(s) to add cross-cutting network behavior without changing their code. | Ch. 27 |
-| Service mesh | A coordinated system of sidecar proxies deployed platform-wide for uniform traffic security, observability, and routing. | Ch. 27 |
+| Service mesh | Uniform, centrally-controlled traffic security, observability, and routing layered platform-wide — traditionally via per-pod sidecar proxies, though newer sidecarless/ambient designs use shared node-level proxies instead. | Ch. 27 |
 | Attack surface | The total set of points where an unauthorized actor could attempt to interact with a system. | Ch. 28 |
 | Segmentation | Dividing a network into smaller zones with policy enforcing what traffic may cross between them. | Ch. 28 |
 | Least privilege | Granting each component, service, or user only the specific access genuinely required for its function. | Ch. 28 |

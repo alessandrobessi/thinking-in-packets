@@ -7,6 +7,40 @@ Each chapter's own drafting pass should get an entry here.
 
 ### Fixed
 
+- Addressed a second-pass technical review's 9 remaining corrections
+  across Chapters 10, 12, 16, 17, 19, 20, 22, 24, and 27: MTU redefined
+  as the largest IP packet a link carries, not the largest frame, plus
+  softening a residual "signals reliably arrive" overclaim (Ch. 10);
+  broadened the socket definition to cover listening/unconnected
+  sockets, and corrected "the reply finds its way to the browser tab"
+  to stop at the process level (Ch. 12); scoped VPN-server visibility to
+  metadata, not content still separately protected by an inner TLS
+  layer (Ch. 16); corrected DNS delegation-chain caching so an expired
+  answer doesn't imply a full root-to-authoritative re-walk (Ch. 17);
+  relabeled HTTP as an application-layer protocol rather than a
+  "transport-and-structure layer," and decoupled 403 from identity
+  specifically (Ch. 19); scoped the page-load dependency chain to its
+  conventional TCP-and-TLS path with a forward pointer to QUIC, and
+  separated DNS's remote-address resolution from ARP/NDP's local
+  next-hop resolution (Ch. 20); distinguished per-request vs.
+  per-connection load-balancer granularity, and narrowed session
+  affinity's actual guarantee (instance-local state for one user, not
+  cross-replica consistency) (Ch. 22); fixed a residual contradiction
+  where Chapter 24's worked example and diagram still claimed QUIC loss
+  is always contained to one stream, reworded "independent
+  loss-recovery state" to reflect connection-level loss detection with
+  per-stream delivery, and softened "user-space transport" from a
+  requirement to QUIC's common deployment pattern (Ch. 24); and
+  corrected sidecar proxies to mediate a pod's traffic rather than one
+  container's, and acknowledged sidecarless/ambient service-mesh
+  architectures alongside the traditional sidecar model (Ch. 27). Also
+  fixed a leftover "connection tuple" glossary reference missed by the
+  first pass's rename to "five-tuple." Updated `glossary.md` and 9
+  `references/chapter-NN.md` files with primary sources (RFC 1191, 894,
+  9293, 768, 1034, 8446, RFC 9110 §§1/3, RFC 9000 §12.4/9308, Istio
+  ambient-mode docs, cloud L4/L7 load-balancer docs) backing each
+  correction. All four structural validators still pass clean.
+
 - Addressed a technical review's 12 pre-publication corrections across
   Chapters 2, 7, 10, 12, 15, 16, 17/20, 19, 22, 24, 26, and 27: GEO
   satellite round-trip latency math (Ch. 2); SLAAC/DHCPv6 DNS delivery

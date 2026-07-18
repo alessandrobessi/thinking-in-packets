@@ -25,6 +25,12 @@ Per-chapter citation trail (blueprint.md §19).
   concepts this chapter covers generically — implementation specifics
   (probe intervals, affinity cookie mechanics) vary by vendor and are
   intentionally not covered here.
+- Major cloud providers' Layer 4 vs. Layer 7 load-balancer documentation
+  (e.g. "network load balancer" vs. "application load balancer" product
+  lines) — source for this chapter's second-pass correction that
+  per-connection/flow selection, not per-request selection, is the
+  common case for transport-layer load balancers; application-layer
+  balancers are the ones that can genuinely pick fresh per HTTP request.
 
 ## Empirical claims
 
@@ -42,3 +48,9 @@ Per-chapter citation trail (blueprint.md §19).
   consistency) are gestured at through the "briefly diverge" language but
   not formally defined — that's deliberately out of this book's scope per
   blueprint §5 (not a distributed-systems consistency text).
+- Second-pass correction: session affinity was previously framed as a
+  general fix for replica divergence; corrected to scope it specifically
+  to instance-local state for one user's own traffic, explicit that it
+  does not create cross-replica consistency for shared data — the actual
+  mechanisms that would (consensus, shared/replicated stores, etc.) are
+  named as out of scope, not explained.
