@@ -1,0 +1,43 @@
+# References — Chapter 22: Bringing Services Closer and Spreading the Work
+
+Per-chapter citation trail (blueprint.md §19).
+
+## Standards cited
+
+- RFC 9111 (*HTTP Caching*, 2022, obsoletes RFC 7234) — the standard
+  governing freshness, validation, and cache-control semantics referenced
+  conceptually in this chapter.
+- RFC 1546 (*Host Anycasting Service*, 1993) — the original conceptual
+  proposal for anycast; modern deployment is BGP-based and described in
+  RFC 4786 (*Operation of Anycast Services*, 2006).
+
+## Historical sources
+
+- Early CDN architecture is generally credited to Akamai's founding
+  (1998), commercializing edge-caching research from MIT; this chapter
+  deliberately stays vendor-neutral rather than describing any one
+  provider's implementation.
+
+## Implementation documentation
+
+- Major cloud providers' load-balancer documentation (health check
+  configuration, session-affinity/sticky-session options) illustrates the
+  concepts this chapter covers generically — implementation specifics
+  (probe intervals, affinity cookie mechanics) vary by vendor and are
+  intentionally not covered here.
+
+## Empirical claims
+
+- None beyond the general, widely-documented existence of CDN/load-
+  balancing architecture patterns; no specific performance numbers are
+  claimed in this chapter.
+
+## Known simplifications (may need later technical review)
+
+- Anycast is presented at intuition level only, per blueprint scope — no
+  BGP-policy detail on how "closest" is actually determined at the
+  routing-protocol level, which can diverge from geographic proximity.
+- Cache-consistency and replica-consistency models (eventual vs. strong
+  consistency) are gestured at through the "briefly diverge" language but
+  not formally defined — that's deliberately out of this book's scope per
+  blueprint §5 (not a distributed-systems consistency text).

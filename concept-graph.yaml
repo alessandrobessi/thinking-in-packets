@@ -1,0 +1,1283 @@
+# Machine-readable source of truth for the concept dependency graph in
+# blueprint.md §10. concept-graph.md is this file's human-readable mirror,
+# generated from this file by `scripts/generate_concept_graph_md.py` — do
+# not hand-edit concept-graph.md; regenerate it after any change here (CI
+# checks the two stay in sync).
+#
+# Fields:
+#   id                 stable slug
+#   name               display name, matches blueprint.md's concept graph
+#                      and/or its per-chapter "New concepts introduced" list
+#   level              0-9, per blueprint.md's Concept Dependency Graph (§10)
+#   prerequisites      concept ids that must be introduced first. Encodes
+#                      the *tightest* real dependency, not "everything in
+#                      every earlier level" — transitive prerequisites are
+#                      implied through the chain, not repeated here.
+#   introduced_in      chapter number (1-30) where this concept is first
+#                      formally taught, per blueprint.md §11
+#   written            true if that chapter's prose currently exists
+#   misconception_ids  keys into misconceptions.md's ID column
+#   key_takeaway       anchor into the concept's chapter's Key Takeaway
+#                      section, set once written: true
+
+concepts:
+
+  # ---------- Level 0 (Ch. 1) — Communication and Agreements ----------
+  - id: network
+    name: Network
+    level: 0
+    prerequisites: []
+    introduced_in: 1
+    written: true
+    misconception_ids: [internet-one-org]
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+  - id: endpoint
+    name: Endpoint
+    level: 0
+    prerequisites: []
+    introduced_in: 1
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+  - id: message
+    name: Message
+    level: 0
+    prerequisites: []
+    introduced_in: 1
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+  - id: protocol
+    name: Protocol
+    level: 0
+    prerequisites: [message]
+    introduced_in: 1
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+  - id: intermediary
+    name: Intermediary
+    level: 0
+    prerequisites: [endpoint]
+    introduced_in: 1
+    written: true
+    misconception_ids: [data-travels-unwrapped]
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+  - id: failure-as-normal
+    name: Failure (as a normal condition)
+    level: 0
+    prerequisites: []
+    introduced_in: 1
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+  - id: layered-cooperation
+    name: Layered cooperation
+    level: 0
+    prerequisites: [protocol, intermediary]
+    introduced_in: 1
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/01-the-invisible-journey.md#key-takeaway
+
+  # ---------- Level 1 (Ch. 2-3) — Signals and Links ----------
+  - id: bit
+    name: Bit
+    level: 1
+    prerequisites: [message]
+    introduced_in: 2
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: signal
+    name: Signal
+    level: 1
+    prerequisites: [bit]
+    introduced_in: 2
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: encoding
+    name: Encoding
+    level: 1
+    prerequisites: [signal]
+    introduced_in: 2
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: physical-medium
+    name: Physical medium
+    level: 1
+    prerequisites: [signal]
+    introduced_in: 2
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: noise
+    name: Noise
+    level: 1
+    prerequisites: [signal]
+    introduced_in: 2
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: bandwidth
+    name: Bandwidth
+    level: 1
+    prerequisites: [physical-medium]
+    introduced_in: 2
+    written: true
+    misconception_ids: [bandwidth-equals-latency]
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: propagation-latency
+    name: Propagation latency
+    level: 1
+    prerequisites: [physical-medium]
+    introduced_in: 2
+    written: true
+    misconception_ids: [bandwidth-equals-latency]
+    key_takeaway: book/part-1-signals-and-local-networks/02-turning-information-into-signals.md#key-takeaway
+  - id: frame
+    name: Frame
+    level: 1
+    prerequisites: [bit, encoding]
+    introduced_in: 3
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/03-giving-bits-boundaries.md#key-takeaway
+  - id: header-and-payload
+    name: Header and payload
+    level: 1
+    prerequisites: [frame]
+    introduced_in: 3
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/03-giving-bits-boundaries.md#key-takeaway
+  - id: trailer
+    name: Trailer
+    level: 1
+    prerequisites: [frame]
+    introduced_in: 3
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/03-giving-bits-boundaries.md#key-takeaway
+  - id: checksum
+    name: Checksum / error detection
+    level: 1
+    prerequisites: [frame]
+    introduced_in: 3
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/03-giving-bits-boundaries.md#key-takeaway
+  - id: encapsulation
+    name: Encapsulation
+    level: 1
+    prerequisites: [header-and-payload]
+    introduced_in: 3
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/03-giving-bits-boundaries.md#key-takeaway
+
+  # ---------- Level 2 (Ch. 4-5) — Local Delivery ----------
+  - id: network-interface
+    name: Network interface
+    level: 2
+    prerequisites: [endpoint]
+    introduced_in: 4
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: mac-address
+    name: MAC address
+    level: 2
+    prerequisites: [network-interface, frame]
+    introduced_in: 4
+    written: true
+    misconception_ids: [mac-permanent-global-identity]
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: ethernet-wifi
+    name: Ethernet and Wi-Fi
+    level: 2
+    prerequisites: [physical-medium, frame]
+    introduced_in: 4
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: shared-medium
+    name: Shared medium
+    level: 2
+    prerequisites: [ethernet-wifi]
+    introduced_in: 4
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: switch
+    name: Switch
+    level: 2
+    prerequisites: [mac-address, ethernet-wifi]
+    introduced_in: 4
+    written: true
+    misconception_ids: [switch-router-same-job]
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: forwarding-table
+    name: Forwarding table (switch)
+    level: 2
+    prerequisites: [switch]
+    introduced_in: 4
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: broadcast
+    name: Broadcast
+    level: 2
+    prerequisites: [switch]
+    introduced_in: 4
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md#key-takeaway
+  - id: broadcast-domain
+    name: Broadcast domain
+    level: 2
+    prerequisites: [broadcast]
+    introduced_in: 5
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/05-why-one-giant-network-does-not-work.md#key-takeaway
+  - id: failure-domain
+    name: Failure domain
+    level: 2
+    prerequisites: [broadcast-domain]
+    introduced_in: 5
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/05-why-one-giant-network-does-not-work.md#key-takeaway
+  - id: administrative-boundary
+    name: Administrative boundary
+    level: 2
+    prerequisites: [broadcast-domain]
+    introduced_in: 5
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/05-why-one-giant-network-does-not-work.md#key-takeaway
+  - id: internetwork
+    name: Internetwork
+    level: 2
+    prerequisites: [broadcast-domain, administrative-boundary]
+    introduced_in: 5
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-1-signals-and-local-networks/05-why-one-giant-network-does-not-work.md#key-takeaway
+
+  # ---------- Level 3 (Ch. 6-8) — Internetworking ----------
+  - id: ip-packet
+    name: IP packet
+    level: 3
+    prerequisites: [internetwork, header-and-payload]
+    introduced_in: 6
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/06-addresses-that-describe-where-to-route.md#key-takeaway
+  - id: ipv4-ipv6-address
+    name: IPv4 and IPv6 address
+    level: 3
+    prerequisites: [ip-packet]
+    introduced_in: 6
+    written: true
+    misconception_ids: [ip-permanently-identifies-machine]
+    key_takeaway: book/part-2-building-an-internet/06-addresses-that-describe-where-to-route.md#key-takeaway
+  - id: prefix-and-subnet
+    name: Prefix and subnet
+    level: 3
+    prerequisites: [ipv4-ipv6-address]
+    introduced_in: 6
+    written: true
+    misconception_ids: [subnet-just-a-label]
+    key_takeaway: book/part-2-building-an-internet/06-addresses-that-describe-where-to-route.md#key-takeaway
+  - id: network-host-portion
+    name: Network and host portions
+    level: 3
+    prerequisites: [prefix-and-subnet]
+    introduced_in: 6
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/06-addresses-that-describe-where-to-route.md#key-takeaway
+  - id: hierarchical-allocation
+    name: Hierarchical address allocation
+    level: 3
+    prerequisites: [prefix-and-subnet]
+    introduced_in: 6
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/06-addresses-that-describe-where-to-route.md#key-takeaway
+  - id: interface-configuration
+    name: Interface configuration
+    level: 3
+    prerequisites: [ipv4-ipv6-address, network-interface]
+    introduced_in: 7
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/07-joining-a-network.md#key-takeaway
+  - id: dhcp
+    name: DHCP
+    level: 3
+    prerequisites: [interface-configuration]
+    introduced_in: 7
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/07-joining-a-network.md#key-takeaway
+  - id: slaac
+    name: SLAAC
+    level: 3
+    prerequisites: [interface-configuration]
+    introduced_in: 7
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/07-joining-a-network.md#key-takeaway
+  - id: default-gateway
+    name: Default gateway
+    level: 3
+    prerequisites: [interface-configuration]
+    introduced_in: 7
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/07-joining-a-network.md#key-takeaway
+  - id: dns-resolver-address
+    name: DNS resolver address (local config)
+    level: 3
+    prerequisites: [interface-configuration]
+    introduced_in: 7
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/07-joining-a-network.md#key-takeaway
+  - id: dhcp-lease
+    name: Lease (DHCP)
+    level: 3
+    prerequisites: [dhcp]
+    introduced_in: 7
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/07-joining-a-network.md#key-takeaway
+  - id: next-hop
+    name: Next hop
+    level: 3
+    prerequisites: [default-gateway]
+    introduced_in: 8
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/08-finding-the-next-device.md#key-takeaway
+  - id: local-vs-remote-decision
+    name: Local-versus-remote decision
+    level: 3
+    prerequisites: [prefix-and-subnet, default-gateway]
+    introduced_in: 8
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/08-finding-the-next-device.md#key-takeaway
+  - id: arp
+    name: ARP
+    level: 3
+    prerequisites: [mac-address, ipv4-ipv6-address, local-vs-remote-decision]
+    introduced_in: 8
+    written: true
+    misconception_ids: [arp-finds-remote-machines]
+    key_takeaway: book/part-2-building-an-internet/08-finding-the-next-device.md#key-takeaway
+  - id: neighbor-discovery
+    name: IPv6 Neighbor Discovery
+    level: 3
+    prerequisites: [mac-address, ipv4-ipv6-address, local-vs-remote-decision]
+    introduced_in: 8
+    written: true
+    misconception_ids: [arp-finds-remote-machines]
+    key_takeaway: book/part-2-building-an-internet/08-finding-the-next-device.md#key-takeaway
+  - id: neighbor-cache
+    name: Neighbor/ARP cache
+    level: 3
+    prerequisites: [arp, neighbor-discovery]
+    introduced_in: 8
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/08-finding-the-next-device.md#key-takeaway
+  - id: address-resolution
+    name: Address resolution (general)
+    level: 3
+    prerequisites: [arp, neighbor-discovery]
+    introduced_in: 8
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/08-finding-the-next-device.md#key-takeaway
+
+  # ---------- Level 4 (Ch. 9-11) — Forwarding and Routing ----------
+  - id: router
+    name: Router
+    level: 4
+    prerequisites: [next-hop, switch]
+    introduced_in: 9
+    written: true
+    misconception_ids: [switch-router-same-job]
+    key_takeaway: book/part-2-building-an-internet/09-one-hop-at-a-time.md#key-takeaway
+  - id: routing-table
+    name: Routing table
+    level: 4
+    prerequisites: [router]
+    introduced_in: 9
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/09-one-hop-at-a-time.md#key-takeaway
+  - id: longest-prefix-match
+    name: Longest-prefix matching
+    level: 4
+    prerequisites: [routing-table, prefix-and-subnet]
+    introduced_in: 9
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/09-one-hop-at-a-time.md#key-takeaway
+  - id: default-route
+    name: Default route
+    level: 4
+    prerequisites: [routing-table]
+    introduced_in: 9
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/09-one-hop-at-a-time.md#key-takeaway
+  - id: data-plane
+    name: Data plane
+    level: 4
+    prerequisites: [router]
+    introduced_in: 9
+    written: true
+    misconception_ids: [routers-know-full-path]
+    key_takeaway: book/part-2-building-an-internet/09-one-hop-at-a-time.md#key-takeaway
+  - id: best-effort-delivery
+    name: Best-effort delivery
+    level: 4
+    prerequisites: [ip-packet]
+    introduced_in: 10
+    written: true
+    misconception_ids: [ip-guarantees-delivery]
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: ttl-hop-limit
+    name: TTL and Hop Limit
+    level: 4
+    prerequisites: [best-effort-delivery, routing-table]
+    introduced_in: 10
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: icmp
+    name: ICMP
+    level: 4
+    prerequisites: [best-effort-delivery]
+    introduced_in: 10
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: mtu
+    name: MTU
+    level: 4
+    prerequisites: [frame, ip-packet]
+    introduced_in: 10
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: path-mtu
+    name: Path MTU discovery
+    level: 4
+    prerequisites: [mtu, icmp]
+    introduced_in: 10
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: fragmentation
+    name: Fragmentation
+    level: 4
+    prerequisites: [mtu]
+    introduced_in: 10
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: packet-loss
+    name: Packet loss
+    level: 4
+    prerequisites: [best-effort-delivery]
+    introduced_in: 10
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md#key-takeaway
+  - id: autonomous-system
+    name: Autonomous system
+    level: 4
+    prerequisites: [routing-table, administrative-boundary]
+    introduced_in: 11
+    written: true
+    misconception_ids: [internet-one-org]
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: isp
+    name: ISP
+    level: 4
+    prerequisites: [autonomous-system]
+    introduced_in: 11
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: peering-and-transit
+    name: Peering and transit
+    level: 4
+    prerequisites: [autonomous-system]
+    introduced_in: 11
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: route-advertisement
+    name: Route advertisement
+    level: 4
+    prerequisites: [autonomous-system, routing-table]
+    introduced_in: 11
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: control-plane
+    name: Control plane
+    level: 4
+    prerequisites: [data-plane, route-advertisement]
+    introduced_in: 11
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: bgp
+    name: BGP
+    level: 4
+    prerequisites: [route-advertisement, peering-and-transit]
+    introduced_in: 11
+    written: true
+    misconception_ids: [bgp-shortest-physical-path]
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: routing-policy
+    name: Routing policy
+    level: 4
+    prerequisites: [bgp]
+    introduced_in: 11
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+  - id: route-convergence
+    name: Route convergence
+    level: 4
+    prerequisites: [bgp]
+    introduced_in: 11
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md#key-takeaway
+
+  # ---------- Level 5 (Ch. 12-15) — Transport ----------
+  - id: process-and-port
+    name: Process and port
+    level: 5
+    prerequisites: [endpoint, ip-packet]
+    introduced_in: 12
+    written: true
+    misconception_ids: [ports-are-physical-connectors]
+    key_takeaway: book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway
+  - id: socket
+    name: Socket and connection tuple
+    level: 5
+    prerequisites: [process-and-port, ipv4-ipv6-address]
+    introduced_in: 12
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway
+  - id: multiplexing-transport
+    name: Multiplexing (transport-layer)
+    level: 5
+    prerequisites: [socket]
+    introduced_in: 12
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway
+  - id: udp
+    name: UDP
+    level: 5
+    prerequisites: [socket]
+    introduced_in: 13
+    written: true
+    misconception_ids: [udp-means-unreliable-apps]
+    key_takeaway: book/part-3-end-to-end-conversations/13-sending-independent-datagrams.md#key-takeaway
+  - id: datagram
+    name: Datagram
+    level: 5
+    prerequisites: [udp]
+    introduced_in: 13
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/13-sending-independent-datagrams.md#key-takeaway
+  - id: connectionless-communication
+    name: Connectionless communication
+    level: 5
+    prerequisites: [udp]
+    introduced_in: 13
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/13-sending-independent-datagrams.md#key-takeaway
+  - id: application-managed-reliability
+    name: Application-managed reliability
+    level: 5
+    prerequisites: [connectionless-communication]
+    introduced_in: 13
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/13-sending-independent-datagrams.md#key-takeaway
+  - id: tcp
+    name: TCP
+    level: 5
+    prerequisites: [socket, best-effort-delivery]
+    introduced_in: 14
+    written: true
+    misconception_ids: [tcp-preserves-message-boundaries]
+    key_takeaway: book/part-3-end-to-end-conversations/14-building-a-reliable-stream.md#key-takeaway
+  - id: tcp-handshake
+    name: TCP handshake
+    level: 5
+    prerequisites: [tcp]
+    introduced_in: 14
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/14-building-a-reliable-stream.md#key-takeaway
+  - id: byte-stream
+    name: Byte stream
+    level: 5
+    prerequisites: [tcp]
+    introduced_in: 14
+    written: true
+    misconception_ids: [tcp-preserves-message-boundaries]
+    key_takeaway: book/part-3-end-to-end-conversations/14-building-a-reliable-stream.md#key-takeaway
+  - id: sequence-and-ack
+    name: Sequence numbers and acknowledgement
+    level: 5
+    prerequisites: [byte-stream]
+    introduced_in: 14
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/14-building-a-reliable-stream.md#key-takeaway
+  - id: retransmission
+    name: Retransmission
+    level: 5
+    prerequisites: [sequence-and-ack]
+    introduced_in: 14
+    written: true
+    misconception_ids: [tcp-guarantees-app-completion]
+    key_takeaway: book/part-3-end-to-end-conversations/14-building-a-reliable-stream.md#key-takeaway
+  - id: ordering-and-duplicate-detection
+    name: Ordering and duplicate detection
+    level: 5
+    prerequisites: [sequence-and-ack]
+    introduced_in: 14
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/14-building-a-reliable-stream.md#key-takeaway
+  - id: flow-control
+    name: Flow control / receive window
+    level: 5
+    prerequisites: [byte-stream]
+    introduced_in: 15
+    written: true
+    misconception_ids: [flow-congestion-control-same]
+    key_takeaway: book/part-3-end-to-end-conversations/15-reliability-without-collapse.md#key-takeaway
+  - id: congestion-control
+    name: Congestion control / congestion window
+    level: 5
+    prerequisites: [flow-control, packet-loss]
+    introduced_in: 15
+    written: true
+    misconception_ids: [flow-congestion-control-same]
+    key_takeaway: book/part-3-end-to-end-conversations/15-reliability-without-collapse.md#key-takeaway
+  - id: ack-clocking
+    name: Acknowledgement clocking
+    level: 5
+    prerequisites: [congestion-control]
+    introduced_in: 15
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/15-reliability-without-collapse.md#key-takeaway
+  - id: retransmission-timeout
+    name: Retransmission timeout
+    level: 5
+    prerequisites: [retransmission]
+    introduced_in: 15
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/15-reliability-without-collapse.md#key-takeaway
+  - id: fairness-and-backoff
+    name: Fairness and backoff
+    level: 5
+    prerequisites: [congestion-control]
+    introduced_in: 15
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-3-end-to-end-conversations/15-reliability-without-collapse.md#key-takeaway
+
+  # ---------- Level 6 (Ch. 16-19) — Naming, Intermediation, Application Protocols ----------
+  - id: private-public-address
+    name: Private and public addressing
+    level: 6
+    prerequisites: [ipv4-ipv6-address]
+    introduced_in: 16
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md#key-takeaway
+  - id: nat
+    name: NAT and port translation
+    level: 6
+    prerequisites: [private-public-address, process-and-port]
+    introduced_in: 16
+    written: true
+    misconception_ids: [nat-firewall-same-mechanism, nat-required-for-security]
+    key_takeaway: book/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md#key-takeaway
+  - id: stateful-firewall
+    name: Stateful firewall
+    level: 6
+    prerequisites: [socket]
+    introduced_in: 16
+    written: true
+    misconception_ids: [nat-firewall-same-mechanism]
+    key_takeaway: book/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md#key-takeaway
+  - id: proxy
+    name: Forward and reverse proxy
+    level: 6
+    prerequisites: [tcp]
+    introduced_in: 16
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md#key-takeaway
+  - id: vpn-tunnel
+    name: VPN tunnel
+    level: 6
+    prerequisites: [encapsulation, tcp]
+    introduced_in: 16
+    written: true
+    misconception_ids: [vpn-guarantees-anonymity]
+    key_takeaway: book/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md#key-takeaway
+  - id: middlebox
+    name: Middlebox
+    level: 6
+    prerequisites: [nat, stateful-firewall, proxy]
+    introduced_in: 16
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md#key-takeaway
+  - id: domain-name
+    name: Domain name
+    level: 6
+    prerequisites: [ipv4-ipv6-address]
+    introduced_in: 17
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/17-naming-a-moving-world.md#key-takeaway
+  - id: dns-hierarchy
+    name: DNS hierarchy, root, TLD
+    level: 6
+    prerequisites: [domain-name, hierarchical-allocation]
+    introduced_in: 17
+    written: true
+    misconception_ids: [dns-one-central-server]
+    key_takeaway: book/part-4-names-trust-and-the-web/17-naming-a-moving-world.md#key-takeaway
+  - id: authoritative-recursive-resolver
+    name: Authoritative and recursive resolvers
+    level: 6
+    prerequisites: [dns-hierarchy]
+    introduced_in: 17
+    written: true
+    misconception_ids: [dns-one-central-server]
+    key_takeaway: book/part-4-names-trust-and-the-web/17-naming-a-moving-world.md#key-takeaway
+  - id: dns-delegation
+    name: DNS delegation
+    level: 6
+    prerequisites: [dns-hierarchy]
+    introduced_in: 17
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/17-naming-a-moving-world.md#key-takeaway
+  - id: dns-record-types
+    name: DNS record types (A, AAAA, CNAME)
+    level: 6
+    prerequisites: [dns-hierarchy]
+    introduced_in: 17
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/17-naming-a-moving-world.md#key-takeaway
+  - id: dns-caching-ttl
+    name: DNS caching and TTL
+    level: 6
+    prerequisites: [authoritative-recursive-resolver]
+    introduced_in: 17
+    written: true
+    misconception_ids: [dns-instant-global-propagation]
+    key_takeaway: book/part-4-names-trust-and-the-web/17-naming-a-moving-world.md#key-takeaway
+  - id: encryption-integrity-authentication
+    name: Encryption, integrity, authentication
+    level: 6
+    prerequisites: [message]
+    introduced_in: 18
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/18-establishing-trust-on-an-untrusted-network.md#key-takeaway
+  - id: certificate-and-ca
+    name: Certificate and certificate authority
+    level: 6
+    prerequisites: [encryption-integrity-authentication]
+    introduced_in: 18
+    written: true
+    misconception_ids: [https-proves-trustworthy]
+    key_takeaway: book/part-4-names-trust-and-the-web/18-establishing-trust-on-an-untrusted-network.md#key-takeaway
+  - id: key-exchange
+    name: Key exchange
+    level: 6
+    prerequisites: [encryption-integrity-authentication]
+    introduced_in: 18
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/18-establishing-trust-on-an-untrusted-network.md#key-takeaway
+  - id: tls-session
+    name: TLS session
+    level: 6
+    prerequisites: [certificate-and-ca, key-exchange, tcp]
+    introduced_in: 18
+    written: true
+    misconception_ids: [encryption-hides-all-metadata]
+    key_takeaway: book/part-4-names-trust-and-the-web/18-establishing-trust-on-an-untrusted-network.md#key-takeaway
+  - id: url
+    name: URL
+    level: 6
+    prerequisites: [domain-name]
+    introduced_in: 19
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/19-the-language-of-the-web.md#key-takeaway
+  - id: http-request-response
+    name: HTTP request and response
+    level: 6
+    prerequisites: [url, tls-session]
+    introduced_in: 19
+    written: true
+    misconception_ids: [http-is-the-webpage]
+    key_takeaway: book/part-4-names-trust-and-the-web/19-the-language-of-the-web.md#key-takeaway
+  - id: http-method-status-header-body
+    name: HTTP method, status code, header, body
+    level: 6
+    prerequisites: [http-request-response]
+    introduced_in: 19
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/19-the-language-of-the-web.md#key-takeaway
+  - id: cookie-and-session
+    name: Cookie and session (HTTP)
+    level: 6
+    prerequisites: [http-request-response]
+    introduced_in: 19
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-4-names-trust-and-the-web/19-the-language-of-the-web.md#key-takeaway
+  - id: stateless-protocol
+    name: Stateless protocol
+    level: 6
+    prerequisites: [http-request-response]
+    introduced_in: 19
+    written: true
+    misconception_ids: [one-page-one-request]
+    key_takeaway: book/part-4-names-trust-and-the-web/19-the-language-of-the-web.md#key-takeaway
+
+  # ---------- Level 7 (Ch. 21-25) — Performance and Modern Delivery ----------
+  - id: throughput
+    name: Throughput
+    level: 7
+    prerequisites: [bandwidth]
+    introduced_in: 21
+    written: true
+    misconception_ids: [more-bandwidth-reduces-latency]
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md#key-takeaway
+  - id: serialization-delay
+    name: Serialization delay
+    level: 7
+    prerequisites: [bandwidth]
+    introduced_in: 21
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md#key-takeaway
+  - id: processing-and-queueing-delay
+    name: Processing and queueing delay
+    level: 7
+    prerequisites: [router]
+    introduced_in: 21
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md#key-takeaway
+  - id: round-trip-time
+    name: Round-trip time
+    level: 7
+    prerequisites: [propagation-latency, serialization-delay]
+    introduced_in: 21
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md#key-takeaway
+  - id: jitter
+    name: Jitter
+    level: 7
+    prerequisites: [round-trip-time]
+    introduced_in: 21
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md#key-takeaway
+  - id: bufferbloat
+    name: Buffering and bufferbloat
+    level: 7
+    prerequisites: [processing-and-queueing-delay]
+    introduced_in: 21
+    written: true
+    misconception_ids: [more-buffering-always-better]
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md#key-takeaway
+  - id: caching
+    name: Caching
+    level: 7
+    prerequisites: [http-request-response]
+    introduced_in: 22
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/22-bringing-services-closer-and-spreading-the-work.md#key-takeaway
+  - id: cdn
+    name: CDN and edge location
+    level: 7
+    prerequisites: [caching, dns-hierarchy]
+    introduced_in: 22
+    written: true
+    misconception_ids: [cdn-is-just-a-cache]
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/22-bringing-services-closer-and-spreading-the-work.md#key-takeaway
+  - id: load-balancer
+    name: Load balancer
+    level: 7
+    prerequisites: [socket]
+    introduced_in: 22
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/22-bringing-services-closer-and-spreading-the-work.md#key-takeaway
+  - id: health-check
+    name: Health check
+    level: 7
+    prerequisites: [load-balancer]
+    introduced_in: 22
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/22-bringing-services-closer-and-spreading-the-work.md#key-takeaway
+  - id: replication-and-affinity
+    name: Replication and session affinity
+    level: 7
+    prerequisites: [load-balancer]
+    introduced_in: 22
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/22-bringing-services-closer-and-spreading-the-work.md#key-takeaway
+  - id: connection-reuse
+    name: Connection reuse
+    level: 7
+    prerequisites: [tcp-handshake]
+    introduced_in: 23
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/23-many-requests-fewer-connections.md#key-takeaway
+  - id: multiplexing-http2
+    name: Stream multiplexing (HTTP/2)
+    level: 7
+    prerequisites: [connection-reuse, http-request-response]
+    introduced_in: 23
+    written: true
+    misconception_ids: [more-connections-always-faster]
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/23-many-requests-fewer-connections.md#key-takeaway
+  - id: header-compression
+    name: Header compression
+    level: 7
+    prerequisites: [multiplexing-http2]
+    introduced_in: 23
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/23-many-requests-fewer-connections.md#key-takeaway
+  - id: head-of-line-blocking
+    name: Head-of-line blocking
+    level: 7
+    prerequisites: [multiplexing-http2, byte-stream]
+    introduced_in: 23
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/23-many-requests-fewer-connections.md#key-takeaway
+  - id: quic
+    name: QUIC
+    level: 7
+    prerequisites: [udp, tls-session, head-of-line-blocking]
+    introduced_in: 24
+    written: true
+    misconception_ids: [quic-unreliable-because-udp]
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/24-rebuilding-transport-for-the-modern-web.md#key-takeaway
+  - id: http3
+    name: HTTP/3
+    level: 7
+    prerequisites: [quic, multiplexing-http2]
+    introduced_in: 24
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/24-rebuilding-transport-for-the-modern-web.md#key-takeaway
+  - id: connection-migration
+    name: Connection migration (QUIC connection ID)
+    level: 7
+    prerequisites: [quic]
+    introduced_in: 24
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/24-rebuilding-transport-for-the-modern-web.md#key-takeaway
+  - id: zero-rtt-resumption
+    name: Zero-round-trip resumption (intuition)
+    level: 7
+    prerequisites: [quic]
+    introduced_in: 24
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/24-rebuilding-transport-for-the-modern-web.md#key-takeaway
+  - id: timeliness-vs-completeness
+    name: Timeliness vs. completeness
+    level: 7
+    prerequisites: [udp, tcp]
+    introduced_in: 25
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/25-different-applications-different-networks.md#key-takeaway
+  - id: jitter-buffer
+    name: Jitter buffer
+    level: 7
+    prerequisites: [jitter, timeliness-vs-completeness]
+    introduced_in: 25
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/25-different-applications-different-networks.md#key-takeaway
+  - id: adaptive-bitrate
+    name: Adaptive bitrate
+    level: 7
+    prerequisites: [timeliness-vs-completeness]
+    introduced_in: 25
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/25-different-applications-different-networks.md#key-takeaway
+  - id: real-time-media
+    name: Real-time media trade-offs
+    level: 7
+    prerequisites: [jitter-buffer, adaptive-bitrate]
+    introduced_in: 25
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/25-different-applications-different-networks.md#key-takeaway
+  - id: backpressure
+    name: Backpressure
+    level: 7
+    prerequisites: [flow-control]
+    introduced_in: 25
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-5-speed-scale-and-modern-protocols/25-different-applications-different-networks.md#key-takeaway
+
+  # ---------- Level 8 (Ch. 26-27) — Programmable and Virtual Networks ----------
+  - id: virtual-interface
+    name: Virtual interface
+    level: 8
+    prerequisites: [network-interface]
+    introduced_in: 26
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: bridge-virtual
+    name: Bridge (virtual)
+    level: 8
+    prerequisites: [virtual-interface, switch]
+    introduced_in: 26
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: tunnel-and-overlay
+    name: Tunnel and overlay
+    level: 8
+    prerequisites: [encapsulation, virtual-interface]
+    introduced_in: 26
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: underlay-vs-overlay
+    name: Underlay vs. overlay
+    level: 8
+    prerequisites: [tunnel-and-overlay]
+    introduced_in: 26
+    written: true
+    misconception_ids: [virtual-network-no-physical-dependency]
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: sdn
+    name: Software-defined networking
+    level: 8
+    prerequisites: [control-plane, data-plane]
+    introduced_in: 26
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: cloud-virtual-network
+    name: Cloud virtual network (VPC)
+    level: 8
+    prerequisites: [sdn, underlay-vs-overlay]
+    introduced_in: 26
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: virtual-route-table
+    name: Virtual route table / security group
+    level: 8
+    prerequisites: [cloud-virtual-network, routing-table]
+    introduced_in: 26
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway
+  - id: network-namespace
+    name: Network namespace
+    level: 8
+    prerequisites: [virtual-interface]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: container-network-interface
+    name: Container network interface
+    level: 8
+    prerequisites: [network-namespace]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: pod-address
+    name: Pod/container address
+    level: 8
+    prerequisites: [container-network-interface]
+    introduced_in: 27
+    written: true
+    misconception_ids: [k8s-service-stable-instance]
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: service-address-and-discovery
+    name: Service address and discovery
+    level: 8
+    prerequisites: [pod-address, dns-hierarchy]
+    introduced_in: 27
+    written: true
+    misconception_ids: [k8s-service-stable-instance]
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: ingress-egress
+    name: Ingress and egress
+    level: 8
+    prerequisites: [service-address-and-discovery, proxy]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: sidecar-proxy
+    name: Sidecar proxy
+    level: 8
+    prerequisites: [proxy, network-namespace]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: service-mesh
+    name: Service mesh
+    level: 8
+    prerequisites: [sidecar-proxy, service-address-and-discovery]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+
+  # ---------- Level 9 (Ch. 28-29) — Production Reasoning ----------
+  - id: attack-surface
+    name: Attack surface
+    level: 9
+    prerequisites: [endpoint]
+    introduced_in: 28
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/28-security-and-resilience-are-architectural.md#key-takeaway
+  - id: segmentation-least-privilege
+    name: Segmentation and least privilege
+    level: 9
+    prerequisites: [administrative-boundary, stateful-firewall]
+    introduced_in: 28
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/28-security-and-resilience-are-architectural.md#key-takeaway
+  - id: zero-trust
+    name: Zero trust
+    level: 9
+    prerequisites: [segmentation-least-privilege]
+    introduced_in: 28
+    written: true
+    misconception_ids: [private-network-trusted-by-default]
+    key_takeaway: book/part-6-networks-in-production/28-security-and-resilience-are-architectural.md#key-takeaway
+  - id: denial-of-service
+    name: Denial of service
+    level: 9
+    prerequisites: [attack-surface]
+    introduced_in: 28
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/28-security-and-resilience-are-architectural.md#key-takeaway
+  - id: redundancy-and-failover
+    name: Redundancy and failover
+    level: 9
+    prerequisites: [failure-domain]
+    introduced_in: 28
+    written: true
+    misconception_ids: [redundancy-automatic-resilience]
+    key_takeaway: book/part-6-networks-in-production/28-security-and-resilience-are-architectural.md#key-takeaway
+  - id: graceful-degradation
+    name: Graceful degradation
+    level: 9
+    prerequisites: [redundancy-and-failover]
+    introduced_in: 28
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/28-security-and-resilience-are-architectural.md#key-takeaway
+  - id: hypothesis-driven-troubleshooting
+    name: Hypothesis-driven troubleshooting
+    level: 9
+    prerequisites: [layered-cooperation]
+    introduced_in: 29
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/29-seeing-and-troubleshooting-the-network.md#key-takeaway
+  - id: active-passive-observation
+    name: Active probes and passive observation
+    level: 9
+    prerequisites: [hypothesis-driven-troubleshooting, icmp]
+    introduced_in: 29
+    written: true
+    misconception_ids: [ping-success-proves-app-healthy, ping-failure-proves-host-down]
+    key_takeaway: book/part-6-networks-in-production/29-seeing-and-troubleshooting-the-network.md#key-takeaway
+  - id: logs-metrics-traces
+    name: Logs, metrics, and traces
+    level: 9
+    prerequisites: [hypothesis-driven-troubleshooting]
+    introduced_in: 29
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/29-seeing-and-troubleshooting-the-network.md#key-takeaway
+  - id: packet-capture
+    name: Packet capture
+    level: 9
+    prerequisites: [frame, tls-session]
+    introduced_in: 29
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/29-seeing-and-troubleshooting-the-network.md#key-takeaway
+  - id: systematic-troubleshooting-method
+    name: Systematic troubleshooting method
+    level: 9
+    prerequisites: [active-passive-observation, logs-metrics-traces, packet-capture]
+    introduced_in: 29
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/29-seeing-and-troubleshooting-the-network.md#key-takeaway

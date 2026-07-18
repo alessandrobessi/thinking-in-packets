@@ -1,0 +1,69 @@
+name: Build book
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Only one Pages deployment at a time; let an in-flight one finish rather
+# than cancelling it mid-deploy.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Strip authoring scaffolding from chapters
+        run: python3 scripts/prepare_manuscript_for_publish.py
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render book (HTML, EPUB, PDF via Typst)
+        working-directory: publish
+        run: quarto render
+
+      - name: Upload site for Pages deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: publish/_book
+
+      # A single rolling release, overwritten on every push, rather than a
+      # new release per push — the manuscript is still under active
+      # editing, not versioned.
+      - name: Publish PDF/EPUB to a rolling release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-build
+          name: "Latest build"
+          body: >-
+            Automatically rebuilt from ${{ github.sha }} on every push to
+            main. Read the book online via GitHub Pages (see repo
+            "About"); the files here are PDF and EPUB downloads of the
+            same build.
+          prerelease: true
+          files: |
+            publish/_book/*.pdf
+            publish/_book/*.epub
+
+  deploy-pages:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

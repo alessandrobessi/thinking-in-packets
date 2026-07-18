@@ -1,0 +1,75 @@
+project:
+  type: book
+
+book:
+  title: "Thinking in Packets"
+  subtitle: "A Mental Model for Computer Networks"
+  author: "Alessandro Bessi"
+  cover-image: assets/cover.png
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - about-the-author.qmd
+    - part: "Part I — From Signals to Local Networks"
+      chapters:
+        - chapters/part-1-signals-and-local-networks/01-the-invisible-journey.md
+        - chapters/part-1-signals-and-local-networks/02-turning-information-into-signals.md
+        - chapters/part-1-signals-and-local-networks/03-giving-bits-boundaries.md
+        - chapters/part-1-signals-and-local-networks/04-delivery-across-one-local-network.md
+        - chapters/part-1-signals-and-local-networks/05-why-one-giant-network-does-not-work.md
+    - part: "Part II — Building an Internet"
+      chapters:
+        - chapters/part-2-building-an-internet/06-addresses-that-describe-where-to-route.md
+        - chapters/part-2-building-an-internet/07-joining-a-network.md
+        - chapters/part-2-building-an-internet/08-finding-the-next-device.md
+        - chapters/part-2-building-an-internet/09-one-hop-at-a-time.md
+        - chapters/part-2-building-an-internet/10-best-effort-limits-and-failure-signals.md
+    - part: "Part III — End-to-End Conversations"
+      chapters:
+        - chapters/part-3-end-to-end-conversations/11-the-internet-is-a-network-of-networks.md
+        - chapters/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md
+        - chapters/part-3-end-to-end-conversations/13-sending-independent-datagrams.md
+        - chapters/part-3-end-to-end-conversations/14-building-a-reliable-stream.md
+        - chapters/part-3-end-to-end-conversations/15-reliability-without-collapse.md
+    - part: "Part IV — Names, Trust, and the Web"
+      chapters:
+        - chapters/part-4-names-trust-and-the-web/16-the-network-in-the-middle.md
+        - chapters/part-4-names-trust-and-the-web/17-naming-a-moving-world.md
+        - chapters/part-4-names-trust-and-the-web/18-establishing-trust-on-an-untrusted-network.md
+        - chapters/part-4-names-trust-and-the-web/19-the-language-of-the-web.md
+        - chapters/part-4-names-trust-and-the-web/20-what-happens-when-you-visit-a-website.md
+    - part: "Part V — Speed, Scale, and Modern Protocols"
+      chapters:
+        - chapters/part-5-speed-scale-and-modern-protocols/21-where-time-goes.md
+        - chapters/part-5-speed-scale-and-modern-protocols/22-bringing-services-closer-and-spreading-the-work.md
+        - chapters/part-5-speed-scale-and-modern-protocols/23-many-requests-fewer-connections.md
+        - chapters/part-5-speed-scale-and-modern-protocols/24-rebuilding-transport-for-the-modern-web.md
+        - chapters/part-5-speed-scale-and-modern-protocols/25-different-applications-different-networks.md
+    - part: "Part VI — Networks in Production"
+      chapters:
+        - chapters/part-6-networks-in-production/26-networks-made-of-software.md
+        - chapters/part-6-networks-in-production/27-networking-moving-applications.md
+        - chapters/part-6-networks-in-production/28-security-and-resilience-are-architectural.md
+        - chapters/part-6-networks-in-production/29-seeing-and-troubleshooting-the-network.md
+        - chapters/part-6-networks-in-production/30-how-to-think-about-any-network.md
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 1
+    number-sections: false
+    mermaid:
+      theme: neutral
+  typst:
+    toc: true
+    toc-depth: 1
+    number-sections: false
+    template-partials:
+      - typst-show.typ
+    include-before-body:
+      - part-style.typ
+  epub:
+    toc: true
+    toc-depth: 1
+    epub-cover-image: assets/cover-epub.png

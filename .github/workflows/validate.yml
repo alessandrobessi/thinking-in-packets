@@ -1,0 +1,23 @@
+name: Validate manuscript
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python3 scripts/validate_concept_graph.py
+      - run: python3 scripts/validate_manuscript_index.py
+      - run: python3 scripts/validate_glossary_order.py
+      - run: python3 scripts/validate_diagram_references.py
+      - name: Check concept-graph.md is up to date with concept-graph.yaml
+        run: |
+          python3 scripts/generate_concept_graph_md.py
+          git diff --exit-code concept-graph.md

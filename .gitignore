@@ -1,0 +1,10 @@
+# Publication pipeline build artifacts (scripts/prepare_manuscript_for_publish.py
+# regenerates chapters/ from book/; quarto render produces everything else).
+# None of this is committed — it goes stale the moment a chapter is edited.
+publish/chapters/
+publish/_book/
+publish/.quarto/
+
+# Internal planning documents — kept locally, not part of the tracked repo.
+blueprint.md
+ROADMAP.md

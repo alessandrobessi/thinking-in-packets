@@ -1,0 +1,18 @@
+# Welcome {.unnumbered}
+
+A conceptual introduction to how computer networks actually work — signals,
+frames, IP addressing, routing, TCP/UDP, DNS, TLS, HTTP, performance,
+cloud and container networking, and production troubleshooting — written
+for curious, technically-adjacent readers with **no networking
+certification, no systems-programming background, and no prior
+familiarity with the OSI model**.
+
+Most introductions to networking begin with a stack of acronyms or a
+seven-layer diagram to memorize. This book builds one cumulative mental
+model instead, starting from the smallest possible problem — moving
+information between two machines — and following it outward until it
+becomes the Internet, the Web, cloud networking, container networking,
+and production troubleshooting.
+
+*This is a first complete draft, not a finished, professionally edited
+book.*

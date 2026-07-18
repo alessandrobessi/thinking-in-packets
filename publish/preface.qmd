@@ -1,0 +1,67 @@
+# Preface {.unnumbered}
+
+## Why this book
+
+Software developers, DevOps and platform engineers, and technical leaders
+routinely operate on top of networks they can use fluently — deploy a
+service, configure a load balancer, debug a firewall rule — without a
+working model of what's actually happening underneath. That gap is
+uncomfortable the moment something breaks in a way the usual playbook
+doesn't cover.
+
+The usual explanations don't close it. One kind starts with the OSI
+model's seven layers as a vocabulary test, with no underlying mechanism
+attached. The other kind is a protocol-configuration manual, precise but
+assuming exactly the background most readers don't have and don't need.
+This book tries for a third path: build a durable mental model — signals,
+frames, addressing, routing, transport, naming, trust, performance,
+virtualization — using stories, worked examples, and precise language, so
+the understanding still holds up after the specific protocols and
+platforms in use today are replaced by whatever comes next.
+
+## How this book came to be
+
+This book follows the same blueprint-driven method as its sibling
+project, *Thinking in Tokens*: a founding blueprint sets the mission,
+audience, scope, narrative graph, and concept dependency graph in
+advance, and the manuscript is drafted chapter by chapter against it in
+collaboration with Claude (Anthropic), which did the writing itself.
+
+## Who this is for
+
+Software developers who can build applications but find networking
+opaque; DevOps, platform, and cloud practitioners who know commands but
+want a deeper model; product managers, founders, consultants, and
+technical leaders; cybersecurity and data professionals who need
+networking foundations; students approaching distributed systems or cloud
+computing; and lifelong learners who want to understand what actually
+happens when one machine talks to another.
+
+## What you'll come away with
+
+By the end, you should be able to explain, in order, what happens when a
+browser opens an HTTPS website; distinguish a signal, frame, packet,
+segment, and stream; explain what switches, routers, NAT devices,
+firewalls, proxies, load balancers, and CDNs actually do; reason about
+IPv4 and IPv6 together, not as an optional appendix; approach an outage by
+narrowing the failing layer instead of guessing; and evaluate claims like
+"zero trust" or "serverless networking" with informed skepticism instead
+of either trusting or dismissing them outright.
+
+## How the book is built
+
+Every chapter builds understanding through a real-world story, a second
+worked example from a different angle, and a precise technical
+explanation, returns to one recurring scenario — a laptop joining café
+Wi-Fi and opening an HTTPS website — addresses the misconceptions that
+trip readers up, and ends with one bolded, memorable sentence that
+distills its core idea. Most chapters use zero or one diagram; a few use
+two, always paired with prose that carries the same idea unaided.
+
+## How to read it
+
+Chapters are meant to be read in order, not sampled topically. Each
+chapter's vocabulary is a prerequisite for the next, following an
+explicit concept dependency graph rather than a loose topic list — by the
+time a term like "BGP" or "QUIC" is used without explanation, it's
+because an earlier chapter already built it from scratch.
