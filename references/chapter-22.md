@@ -54,3 +54,9 @@ Per-chapter citation trail (blueprint.md §19).
   does not create cross-replica consistency for shared data — the actual
   mechanisms that would (consensus, shared/replicated stores, etc.) are
   named as out of scope, not explained.
+- Third-pass correction: "load balancing depends on replication" was
+  stated unconditionally; corrected to scope that dependency to load
+  balancing across equivalent, interchangeable replicas specifically
+  (this chapter's running case), noting that load balancers distributing
+  traffic across heterogeneous or partitioned backends are a different,
+  unnamed-here pattern that doesn't presuppose replication.

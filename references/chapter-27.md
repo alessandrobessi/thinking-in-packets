@@ -16,7 +16,12 @@ Per-chapter citation trail (blueprint.md §19).
 - Kubernetes official documentation, *Virtual IPs and Service Proxies*
   (kubernetes.io/docs/reference/networking/virtual-ips/) — source for the
   Service-resolves-to-virtual-IP-plus-EndpointSlices-driven-data-plane
-  correction in this chapter's worked example and technical explanation.
+  correction in this chapter's worked example and technical explanation;
+  also, via kube-proxy's connection-tracking behavior, the source for
+  this chapter's third-pass correction that Service traffic is commonly
+  forwarded per connection/flow (an established connection continues to
+  the same backend), not re-selected fresh for every individual request
+  — aligning with Chapter 22's own load-balancer granularity correction.
 - Kubernetes official documentation, *Service* — *Headless Services*
   section — source for this chapter's headless-service addition.
 - Kubernetes official documentation, *Ingress* and *Ingress Controllers*

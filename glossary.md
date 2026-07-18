@@ -90,7 +90,7 @@ the real explanation lives in the chapter itself.
 | Destination port | The port number a receiving process is expected to be listening on, carried in a transport-layer packet header. | Ch. 12 |
 | Five-tuple | The combination of source IP, source port, destination IP, destination port, and protocol that uniquely identifies one conversation at a given moment. | Ch. 12 |
 | Socket | The operating system's handle for a transport-layer endpoint — a full five-tuple's worth once a TCP conversation is established, but not every socket has a fixed remote endpoint (a listening TCP socket or unconnected UDP socket doesn't). | Ch. 12 |
-| Demultiplexing | Using an incoming packet's five-tuple (or destination port) to determine which process should receive it. | Ch. 12 |
+| Demultiplexing | Using an incoming packet's five-tuple (or, for a listening socket with no five-tuple yet, its port/protocol/local-address binding) to determine which process should receive it. | Ch. 12 |
 | UDP | User Datagram Protocol — a minimal, connectionless transport protocol that sends independent datagrams with no delivery guarantees. | Ch. 13 |
 | Datagram | One self-contained unit of data sent independently by UDP, with no relationship tracked to any other datagram. | Ch. 13 |
 | Message boundary | The edges of one application-level send, preserved intact by UDP but not by TCP's byte stream. | Ch. 13 |
@@ -183,14 +183,14 @@ the real explanation lives in the chapter itself.
 | HTTP/2 | The version of HTTP built around multiplexing multiple concurrent streams over one connection. | Ch. 23 |
 | Header compression | Shared compression state across an HTTP/2 connection's lifetime, letting repeated header metadata be sent far more compactly. | Ch. 23 |
 | Head-of-line blocking | A lost or delayed unit blocking delivery of unrelated data queued behind it in the same ordered stream. | Ch. 23 |
-| QUIC | A transport protocol implementing reliable, ordered, congestion-controlled delivery as user-space software over UDP. | Ch. 24 |
+| QUIC | A transport protocol implementing reliable, ordered, congestion-controlled delivery over UDP, commonly implemented in user space (not a strict requirement). | Ch. 24 |
 | HTTP/3 | The version of HTTP built to run over QUIC instead of TCP. | Ch. 24 |
 | User-space transport | Transport logic running as ordinary application-level software rather than inside the operating system kernel — QUIC's common, but not strictly required, deployment style. | Ch. 24 |
 | Connection ID | A value QUIC endpoints choose to identify a connection, independent of IP address or port. | Ch. 24 |
 | Connection migration | A QUIC connection continuing across a network change (e.g. Wi-Fi to cellular) without being torn down and rebuilt. | Ch. 24 |
-| Independent streams (QUIC) | Multiple concurrent streams within one QUIC connection, each with its own delivery order at the transport layer, though loss detection and congestion response operate at the connection level. | Ch. 24 |
+| Independent streams (QUIC) | Multiple concurrent streams within one QUIC connection, each with its own delivery order at the transport layer, so a stream is never blocked behind another's missing bytes — though loss detection and congestion response operate at the connection level, so a shrinking shared congestion window can still briefly slow every stream's sending rate after loss. | Ch. 24 |
 | Encrypted transport metadata | Transport-level control information QUIC encrypts alongside application payload, beyond what TCP traditionally protects. | Ch. 24 |
-| Zero-round-trip (0-RTT) resumption | A returning client sending application data immediately alongside its first handshake message, under specific prior-connection conditions; that first flight is more vulnerable to replay than data sent after a full handshake. | Ch. 24 |
+| Zero-round-trip (0-RTT) resumption | A returning client sending application data immediately alongside its first handshake message, under specific prior-connection conditions; inherited from TLS 1.3 (usable over plain TCP too, not just QUIC). That first flight is more vulnerable to replay than data sent after a full handshake. | Ch. 24 |
 | Timeliness | How much a piece of data's usefulness depends on arriving promptly. | Ch. 25 |
 | Completeness | How much an application needs every piece of data to actually arrive, with nothing missing. | Ch. 25 |
 | Jitter buffer | A small holding area that briefly delays incoming data to smooth out uneven arrival caused by jitter. | Ch. 25 |
@@ -211,7 +211,7 @@ the real explanation lives in the chapter itself.
 | Container Network Interface (CNI) | The standardized plugin specification a platform calls to provision a new pod's network interface, address, and routing — names the specification and plugin, not the resulting interface. | Ch. 27 |
 | Pod (container) address | The network-layer address of a specific running pod, deliberately treated as unstable and disposable. | Ch. 27 |
 | Service address | A stable, durable virtual address representing a logical service rather than any one instance behind it. | Ch. 27 |
-| Service discovery | The platform's continuously updated internal directory of currently healthy pod addresses, consulted by the data plane to forward traffic sent to a service address. | Ch. 27 |
+| Service discovery | The platform's continuously updated internal directory of currently healthy pod addresses, consulted by the data plane to forward traffic sent to a service address — commonly selecting an instance once per connection/flow, not necessarily fresh per request. | Ch. 27 |
 | Headless service | A service that skips the stable virtual address and lets DNS resolution return individual pod addresses directly. | Ch. 27 |
 | Ingress | Declared routing configuration — which external host/path maps to which internal service — at a cluster's boundary, distinct from the ingress controller that executes it. | Ch. 27 |
 | Ingress controller | The running proxy infrastructure that reads Ingress configuration and does the actual work of accepting and routing external traffic inward. | Ch. 27 |

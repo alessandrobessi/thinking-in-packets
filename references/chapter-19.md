@@ -25,3 +25,4 @@ Per-chapter citation trail (blueprint.md §19).
 
 - HTTP/2 and HTTP/3's differences from the HTTP/1.1-shaped request/response model shown here are deliberately deferred to Part V (Chapters 23-24) — this chapter teaches HTTP's semantics, not its wire-level framing across versions.
 - Caching headers, content negotiation, and CORS are not covered here — out of scope for the mechanism-level introduction this chapter provides.
+- Third-pass correction: the 401/403 analogy previously described 403 as "a door that recognizes your specific keycard and still won't open" — still identity-framed despite the surrounding prose's correction. Replaced with an analogy naming identity as only one possible reason among several (a rule against the request itself, a resource-level restriction, a policy refusing anyone), consistent with RFC 9110 §15.5.4's generic, non-identity-specific definition already cited above.

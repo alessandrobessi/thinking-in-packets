@@ -34,3 +34,11 @@ mechanism it introduced that this chapter traces end to end.
   address" — corrected to state they resolve different things (a local
   link-layer next hop vs. a remote IP address) at different layers,
   consistent with Chapter 8's own treatment.
+- Third-pass correction: "TLS must complete before HTTP can send
+  anything meaningful" was stated as universal; corrected to scope it to
+  a genuinely fresh connection (this chapter's own scenario), with a
+  bare forward-pointer (no mechanism explained, per style-guide's
+  concept-ordering rule) noting that TLS 1.3 resumption lets a returning
+  client send early data before its handshake finishes even over plain
+  TCP — RFC 8446 §2.3 (already cited Ch. 18/24), the source for this
+  correction.

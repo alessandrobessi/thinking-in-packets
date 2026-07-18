@@ -76,7 +76,7 @@ Inside the TLS session Chapter 18 established, the café laptop's browser now se
 
 **Correct intuition:** `401` means the server doesn't yet have valid proof of who's asking — it's an authentication problem, fixed by logging in or presenting valid credentials. `403` means the server understood the request and refuses it anyway — an authorization or policy problem that logging in again won't fix, because the client may already be correctly authenticated, and the refusal might not be about the caller's identity at all (a resource that's simply off-limits, a rule blocking the request itself).
 
-**Analogy:** A `401` is a locked door with no key presented yet; a `403` is a door that recognizes your specific keycard and still won't open for you.
+**Analogy:** A `401` is a door asking you to present valid credentials before it will even consider the request. A `403` is a door that has understood the request and is refusing it regardless — possibly because of who's asking, but just as easily because of a rule against the request itself, a restriction on the specific resource, or a policy that would refuse anyone.
 
 ## Practical Implications
 

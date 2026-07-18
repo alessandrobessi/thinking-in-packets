@@ -7,6 +7,37 @@ Each chapter's own drafting pass should get an entry here.
 
 ### Fixed
 
+- Addressed a third-pass technical review's 8 remaining findings across
+  Chapters 10, 12, 19, 20, 22, 24, and 27: IPv6's sending-endpoint
+  fragmentation clarified as a real (if rarely used) capability via the
+  Fragment extension header, not just packet-size avoidance (Ch. 10);
+  scoped "every transport-layer packet has ports" to UDP/TCP
+  specifically (ICMP has none), and corrected listening-socket
+  demultiplexing to depend on port+protocol+local-address, not
+  destination port alone (Ch. 12); replaced a still-identity-tied 403
+  analogy ("recognizes your keycard") with one naming identity as only
+  one possible refusal reason among several (Ch. 19); scoped
+  "TLS must complete before HTTP" to a genuinely fresh connection, with
+  a bare forward-pointer (no mechanism explained) noting TLS 1.3
+  resumption lets a returning client send early data over plain TCP,
+  independent of QUIC (Ch. 20); scoped "load balancing depends on
+  replication" to load balancing across equivalent replicas specifically
+  (Ch. 22); added the connection-wide congestion-window caveat QUIC's
+  worked example, diagram, and What to Remember were still missing —
+  "not blocked" by an unrelated stream's loss is narrower than "not
+  affected," since a shrinking shared congestion window can still slow
+  every stream's sending rate — and clarified 0-RTT resumption as a TLS
+  1.3 capability QUIC reuses, not something QUIC invented (Ch. 24); and
+  aligned Chapter 27's Service data-plane forwarding language with
+  Chapter 22's own connection/flow-vs-request granularity distinction,
+  removing an internal inconsistency between the two chapters (Ch. 27).
+  Updated `glossary.md` (QUIC, independent streams, 0-RTT, demultiplexing,
+  service discovery, service address entries) and 7
+  `references/chapter-NN.md` files with primary sources (RFC 8446 §2.3,
+  RFC 9002 §5, RFC 792, Kubernetes kube-proxy connection-tracking docs)
+  backing each correction. All four structural validators still pass
+  clean.
+
 - Addressed a second-pass technical review's 9 remaining corrections
   across Chapters 10, 12, 16, 17, 19, 20, 22, 24, and 27: MTU redefined
   as the largest IP packet a link carries, not the largest frame, plus

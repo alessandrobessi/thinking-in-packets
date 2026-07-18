@@ -26,6 +26,8 @@ Per-chapter citation trail (blueprint.md §19).
   this chapter's "commonly implemented as user-space" correction (a
   kernel-level QUIC implementation is possible and not excluded by RFC 9000).
 - RFC 8446 (*TLS 1.3*, 2018) §8, *0-RTT and Anti-Replay* — the source for this chapter's 0-RTT replay-vulnerability correction: 0-RTT data lacks the forward-secrecy/freshness guarantee of data sent after a full handshake, so applications must restrict it to operations safe to (potentially) execute more than once.
+- RFC 8446 §2.3, *0-RTT Data* — the source for this chapter's third-pass correction that 0-RTT early-data resumption is itself a TLS 1.3 capability, usable over plain TCP, not something QUIC invented by combining its handshake steps.
+- RFC 9002 §5 (*Congestion Control*, already cited above) — the specific source for this chapter's third-pass correction that a stream being "not blocked" by an unrelated stream's loss is narrower than "unaffected": a shrinking connection-wide congestion window after loss can still reduce every stream's available sending rate.
 
 ## Historical sources
 
