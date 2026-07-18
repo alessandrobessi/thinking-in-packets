@@ -88,7 +88,7 @@ the real explanation lives in the chapter itself.
 | Port | A number identifying a specific transport-layer communication endpoint on a host. | Ch. 12 |
 | Source port | The port number a sending process used, carried in a transport-layer packet header. | Ch. 12 |
 | Destination port | The port number a receiving process is expected to be listening on, carried in a transport-layer packet header. | Ch. 12 |
-| Connection tuple | The combination of source IP, source port, destination IP, destination port, and protocol that uniquely identifies one conversation. | Ch. 12 |
+| Five-tuple | The combination of source IP, source port, destination IP, destination port, and protocol that uniquely identifies one conversation. | Ch. 12 |
 | Socket | The operating system's handle representing one endpoint of a specific connection tuple. | Ch. 12 |
 | Demultiplexing | Using an incoming packet's connection tuple (or destination port) to determine which process should receive it. | Ch. 12 |
 | UDP | User Datagram Protocol — a minimal, connectionless transport protocol that sends independent datagrams with no delivery guarantees. | Ch. 13 |
@@ -112,6 +112,7 @@ the real explanation lives in the chapter itself.
 | Retransmission timeout | The interval after which, absent an acknowledgement, a TCP sender infers loss and retransmits. | Ch. 15 |
 | Fairness (congestion control) | The property that no single connection should indefinitely starve others sharing the same congested path. | Ch. 15 |
 | Backoff | A sender's sharp reduction of its congestion window upon detecting loss, before cautiously growing again. | Ch. 15 |
+| Explicit Congestion Notification (ECN) | A mechanism letting a congested router mark a packet instead of dropping it, delivering a congestion signal without any loss. | Ch. 15 |
 | Private address | An address from a reserved range (e.g. RFC 1918) meaningful only within one local network, never forwarded on the public Internet. | Ch. 16 |
 | Public address | A globally unique address, potentially reachable from anywhere on the Internet. | Ch. 16 |
 | NAT (Network Address Translation) | Rewriting a packet's source (and often port) at a network boundary so multiple private addresses can share one public one, using a remembered per-connection translation table. | Ch. 16 |
@@ -146,7 +147,7 @@ the real explanation lives in the chapter itself.
 | TLS session | The stateful, protected channel two endpoints maintain after a successful handshake, using keys derived from their shared secret. | Ch. 18 |
 | URL | A Uniform Resource Locator, identifying a scheme, a host, and a path locating a specific resource. | Ch. 19 |
 | HTTP request | A structured message naming a method and a path, carrying headers and (often) a body, sent to a server. | Ch. 19 |
-| Method (HTTP) | The action an HTTP request names, such as GET (retrieve) or POST (submit data to be processed). | Ch. 19 |
+| Method (HTTP) | The action an HTTP request asks the server to perform, such as GET (safe, read-only retrieval) or POST (process submitted data, possibly with side effects) — defined by intended semantics, not merely by whether a body is present. | Ch. 19 |
 | Path (HTTP) | The part of a URL identifying a specific resource on a host. | Ch. 19 |
 | Header (HTTP) | Metadata attached to an HTTP request or response, such as content type, cookies, or caching directives. | Ch. 19 |
 | Body (HTTP) | The data payload carried by an HTTP request or response, distinct from its headers. | Ch. 19 |
@@ -189,7 +190,7 @@ the real explanation lives in the chapter itself.
 | Connection migration | A QUIC connection continuing across a network change (e.g. Wi-Fi to cellular) without being torn down and rebuilt. | Ch. 24 |
 | Independent streams (QUIC) | Multiple concurrent streams within one QUIC connection, each with its own delivery and loss-recovery state at the transport layer. | Ch. 24 |
 | Encrypted transport metadata | Transport-level control information QUIC encrypts alongside application payload, beyond what TCP traditionally protects. | Ch. 24 |
-| Zero-round-trip (0-RTT) resumption | A returning client sending application data immediately alongside its first handshake message, under specific prior-connection conditions. | Ch. 24 |
+| Zero-round-trip (0-RTT) resumption | A returning client sending application data immediately alongside its first handshake message, under specific prior-connection conditions; that first flight is more vulnerable to replay than data sent after a full handshake. | Ch. 24 |
 | Timeliness | How much a piece of data's usefulness depends on arriving promptly. | Ch. 25 |
 | Completeness | How much an application needs every piece of data to actually arrive, with nothing missing. | Ch. 25 |
 | Jitter buffer | A small holding area that briefly delays incoming data to smooth out uneven arrival caused by jitter. | Ch. 25 |
@@ -204,15 +205,19 @@ the real explanation lives in the chapter itself.
 | Underlay | The real, physical network an overlay's tunneled traffic actually travels across. | Ch. 26 |
 | Software-defined networking (SDN) | Centralizing forwarding-policy computation in a control-plane system that programs distributed data-plane devices. | Ch. 26 |
 | Cloud virtual network (VPC) | A customer-defined logical network within a cloud provider's shared physical infrastructure, built through SDN. | Ch. 26 |
-| Virtual route table | The cloud-virtual-network equivalent of a routing table, customer-configurable within a VPC's logical topology. | Ch. 26 |
-| Network namespace | An isolated, per-container view of network state — its own interfaces and routing table — on a shared kernel. | Ch. 27 |
-| Container network interface | The virtual interface connecting one container's namespace to the broader network. | Ch. 27 |
-| Pod (container) address | The network-layer address of a specific running container instance, deliberately treated as unstable and disposable. | Ch. 27 |
-| Service address | A stable, durable address representing a logical service rather than any one instance behind it. | Ch. 27 |
-| Service discovery | The mechanism resolving a stable service address to the current set of healthy instance addresses. | Ch. 27 |
-| Ingress | Infrastructure at a cluster's boundary responsible for accepting and routing external traffic inward. | Ch. 27 |
-| Egress | Traffic leaving a cluster's or service's boundary outbound, often subject to its own policy and routing. | Ch. 27 |
-| Sidecar proxy | A proxy deployed alongside one application container to add cross-cutting network behavior without changing its code. | Ch. 27 |
+| Virtual route table | The cloud-virtual-network equivalent of a routing table, customer-configurable within a VPC's logical topology — controls where traffic goes, not whether it's permitted (a separate job for security groups/firewall policy). | Ch. 26 |
+| Network namespace | An isolated view of network state — its own interfaces and routing table — on a shared kernel. | Ch. 27 |
+| Pod | A group of one or more tightly coupled containers, the platform's actual unit of scheduling and network identity; owns one network namespace and address, shared by every container inside it. | Ch. 27 |
+| Container Network Interface (CNI) | The standardized plugin specification a platform calls to provision a new pod's network interface, address, and routing — names the specification and plugin, not the resulting interface. | Ch. 27 |
+| Pod (container) address | The network-layer address of a specific running pod, deliberately treated as unstable and disposable. | Ch. 27 |
+| Service address | A stable, durable virtual address representing a logical service rather than any one instance behind it. | Ch. 27 |
+| Service discovery | The platform's continuously updated internal directory of currently healthy pod addresses, consulted by the data plane to forward traffic sent to a service address. | Ch. 27 |
+| Headless service | A service that skips the stable virtual address and lets DNS resolution return individual pod addresses directly. | Ch. 27 |
+| Ingress | Declared routing configuration — which external host/path maps to which internal service — at a cluster's boundary, distinct from the ingress controller that executes it. | Ch. 27 |
+| Ingress controller | The running proxy infrastructure that reads Ingress configuration and does the actual work of accepting and routing external traffic inward. | Ch. 27 |
+| Egress | Traffic actually crossing a cluster's or service's outer boundary outbound, often subject to its own policy and routing — distinct from east-west traffic. | Ch. 27 |
+| East-west traffic | Service-to-service traffic within the same boundary, as distinct from north-south traffic crossing that boundary (ingress/egress). | Ch. 27 |
+| Sidecar proxy | A proxy deployed alongside one pod's application container(s) to add cross-cutting network behavior without changing their code. | Ch. 27 |
 | Service mesh | A coordinated system of sidecar proxies deployed platform-wide for uniform traffic security, observability, and routing. | Ch. 27 |
 | Attack surface | The total set of points where an unauthorized actor could attempt to interact with a system. | Ch. 28 |
 | Segmentation | Dividing a network into smaller zones with policy enforcing what traffic may cross between them. | Ch. 28 |

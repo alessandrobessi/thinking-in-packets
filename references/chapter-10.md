@@ -10,6 +10,8 @@ Per-chapter citation trail (blueprint.md §19).
 - RFC 8200, *Internet Protocol, Version 6* (source of the IPv6 Hop Limit field and the no-in-transit-fragmentation rule; already cited Ch. 6).
 - RFC 1191, *Path MTU Discovery* (IPv4), IETF, 1990.
 - RFC 8201, *Path MTU Discovery for IP version 6*, IETF, 2017.
+- RFC 4732, *Internet Denial-of-Service Considerations* §3 — background on ICMP rate-limiting as deliberate router/OS behavior, cited for this chapter's correction that ICMP generation is neither universal nor guaranteed to arrive.
+- RFC 1812 §4.3.2.7 — router requirements around silently discarding packets under queue exhaustion, the source for this chapter's added third worked-example case (congestion-caused loss produces no ICMP message).
 
 ## Historical sources
 
@@ -23,3 +25,4 @@ Per-chapter citation trail (blueprint.md §19).
 
 - The chapter does not cover IPv4 fragmentation's specific security/performance drawbacks (a real, well-documented motivation for IPv6's design choice) in technical depth — only the behavioral difference itself.
 - "Black-holed" Path MTU Discovery (where ICMP is filtered so thoroughly that neither fragmentation nor a proper error ever occurs) is mentioned only implicitly under Practical Implications, not as its own named failure mode.
+- The chapter's correction (congestion-caused packet loss generates no ICMP message, and even well-defined ICMP cases can be rate-limited or filtered) stays qualitative — no specific rate-limiting thresholds or vendor defaults are cited, consistent with blueprint §19's caution against overstating precision.

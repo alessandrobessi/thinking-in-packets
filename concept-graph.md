@@ -106,7 +106,7 @@ after any change to the YAML and commit both files together.
 | Concept | Status | Chapter | Prerequisites | Misconceptions | Key Takeaway |
 |---|---|---|---|---|---|
 | Process and port | ✅ written | Ch. 12 | endpoint, ip-packet | 1 | [link](book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway) |
-| Socket and connection tuple | ✅ written | Ch. 12 | process-and-port, ipv4-ipv6-address | 0 | [link](book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway) |
+| Socket and five-tuple | ✅ written | Ch. 12 | process-and-port, ipv4-ipv6-address | 0 | [link](book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway) |
 | Multiplexing (transport-layer) | ✅ written | Ch. 12 | socket | 0 | [link](book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway) |
 | UDP | ✅ written | Ch. 13 | socket | 1 | [link](book/part-3-end-to-end-conversations/13-sending-independent-datagrams.md#key-takeaway) |
 | Datagram | ✅ written | Ch. 13 | udp | 0 | [link](book/part-3-end-to-end-conversations/13-sending-independent-datagrams.md#key-takeaway) |
@@ -191,10 +191,13 @@ after any change to the YAML and commit both files together.
 | Cloud virtual network (VPC) | ✅ written | Ch. 26 | sdn, underlay-vs-overlay | 0 | [link](book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway) |
 | Virtual route table / security group | ✅ written | Ch. 26 | cloud-virtual-network, routing-table | 0 | [link](book/part-6-networks-in-production/26-networks-made-of-software.md#key-takeaway) |
 | Network namespace | ✅ written | Ch. 27 | virtual-interface | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
-| Container network interface | ✅ written | Ch. 27 | network-namespace | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
-| Pod/container address | ✅ written | Ch. 27 | container-network-interface | 1 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
+| Pod | ✅ written | Ch. 27 | network-namespace | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
+| Container Network Interface (CNI) | ✅ written | Ch. 27 | pod | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
+| Pod/container address | ✅ written | Ch. 27 | pod, container-network-interface | 1 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
 | Service address and discovery | ✅ written | Ch. 27 | pod-address, dns-hierarchy | 1 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
-| Ingress and egress | ✅ written | Ch. 27 | service-address-and-discovery, proxy | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
+| Headless service | ✅ written | Ch. 27 | service-address-and-discovery | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
+| Ingress (config) and ingress controller; egress | ✅ written | Ch. 27 | service-address-and-discovery, proxy | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
+| East-west traffic | ✅ written | Ch. 27 | ingress-egress | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
 | Sidecar proxy | ✅ written | Ch. 27 | proxy, network-namespace | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
 | Service mesh | ✅ written | Ch. 27 | sidecar-proxy, service-address-and-discovery | 0 | [link](book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway) |
 

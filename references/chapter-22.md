@@ -34,6 +34,7 @@ Per-chapter citation trail (blueprint.md §19).
 
 ## Known simplifications (may need later technical review)
 
+- The corrected large-transfer explanation (RTT/bandwidth-delay-product effects on how quickly a connection reaches full throughput, rather than "propagation delay per byte") stays at intuition level, deliberately not deriving the bandwidth-delay product or slow-start's ramp curve quantitatively — that arithmetic is left to Chapter 21's own scope.
 - Anycast is presented at intuition level only, per blueprint scope — no
   BGP-policy detail on how "closest" is actually determined at the
   routing-protocol level, which can diverge from geographic proximity.

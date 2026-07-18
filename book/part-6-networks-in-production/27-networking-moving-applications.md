@@ -6,7 +6,7 @@
 
 **Prerequisites:** Virtual interfaces and overlays (Ch. 26), DNS (Ch. 17), proxies (Ch. 16), load balancers (Ch. 22)
 
-**New concepts introduced:** network namespace, container network interface, pod (container) address, service address and discovery, ingress and egress, sidecar proxy, service mesh
+**New concepts introduced:** network namespace, pod, Container Network Interface (CNI), pod (container) address, service address and discovery, headless service, ingress and ingress controller, egress, east-west traffic, sidecar proxy, service mesh
 
 ---
 
@@ -26,13 +26,13 @@ Containerized applications move constantly — restarted after a crash, reschedu
 
 Follow one external request — a customer hitting a company's public API — as it travels from the open Internet through to one of several constantly-changing backend instances actually capable of handling it.
 
-The request first reaches an **ingress** point: infrastructure specifically responsible for accepting traffic arriving from outside the cluster and routing it toward the correct internal destination, functioning much like Chapter 16's reverse proxy but purpose-built for a container platform's internal topology. Ingress doesn't know or care about individual container instances directly — it routes based on a stable **service address**: a fixed, published address representing "the API," regardless of which specific backend instances are currently running behind it.
+The request first reaches an **ingress** point: infrastructure specifically responsible for accepting traffic arriving from outside the cluster and routing it toward the correct internal destination, functioning much like Chapter 16's reverse proxy but purpose-built for a container platform's internal topology. The rules for how it should do that — which external hostname and path map to which internal service — are declared as configuration; the actual running proxy process that reads those rules and does the work is a separate piece of infrastructure. Ingress doesn't know or care about individual container instances directly — it routes based on a stable **service address**: a fixed, published address representing "the API," regardless of which specific backend instances are currently running behind it.
 
-Resolving that service address is **service discovery** — the container platform's continuously updated internal directory (conceptually extending Chapter 17's DNS-style resolution into a fast-changing, cluster-internal context) mapping the stable service address to whichever specific backend instances are actually healthy and ready to receive traffic *right now*, the instant the request needs routing, not a static list decided once at deployment time. If one instance crashed thirty seconds ago and a replacement started ten seconds ago, that directory already reflects it.
+Resolving that service address happens the same way Chapter 17's DNS resolution does — a name resolves to an address — except what it resolves to is itself a stable, virtual address representing the service as a whole, not any one instance. The genuinely new mechanism sits one level below that: **service discovery** is the container platform's continuously updated internal directory tracking exactly which backend instances are currently healthy and ready to receive traffic behind that virtual address, updated the instant conditions change, not a static list decided once at deployment time. If one instance crashed thirty seconds ago and a replacement started ten seconds ago, that directory already reflects it — and it's the platform's own data-plane machinery, not the ingress point itself, that continuously reads this directory and keeps traffic to the virtual address actually flowing to the right live instances.
 
-The request is routed to one specific, currently-healthy instance's own **pod address** — a container's own network-layer address, but one explicitly understood to be unstable and disposable: it can, and routinely does, change the moment that particular instance is replaced. The container reaching that address has its own **container network interface**, living inside its own isolated **network namespace** — a private, per-container view of network state (its own interfaces, its own routing table) that keeps one container's networking completely separate from every other container's, even when many containers run on the same physical machine.
+The request ultimately reaches one specific, currently-healthy instance's own **pod address** — the network-layer address of a *pod*, the platform's actual unit of network identity, understood to be unstable and disposable: it can, and routinely does, change the moment that particular instance is replaced. A pod can hold more than one container, and it's the pod, not each individual container inside it, that owns the **network namespace** and its address; containers sharing one pod share that same namespace and reach each other simply via `localhost`, while remaining isolated from every other pod's namespace, even on the same physical machine.
 
-If handling this request requires the backend to call out to another internal service — a database, another microservice — that outbound call is **egress**: traffic leaving the cluster's (or a specific service's) boundary, often subject to its own separate policy and routing, mirroring ingress's inbound role for outbound traffic.
+If handling this request requires the backend to call out to another internal service — a database, another microservice — that's ordinarily called **east-west traffic**: communication between services inside the same cluster or boundary, as distinct from the north-south traffic (like this request) crossing in from outside. That internal call only becomes **egress** in the specific sense this chapter uses the term if it actually leaves the boundary being discussed — reaching out to a service in a different cluster, a different cloud, or the public Internet — often subject to its own separate policy and routing, mirroring ingress's inbound role for traffic actually crossing that outer boundary.
 
 ## Core Intuition
 
@@ -40,31 +40,34 @@ Container platforms solve constant, automatic movement the same way the company 
 
 ## Technical Explanation
 
-A **network namespace** is an isolated, per-container (or per-pod) view of network state — its own interfaces, its own routing table, its own view of what "localhost" means — implemented by the operating system kernel, letting many containers share one physical machine's hardware while each believes it has its own private network stack, similar in spirit to how Chapter 26's virtual interfaces let many VMs share physical network hardware. A **container network interface** is the virtual interface (Chapter 26) actually connecting one container's namespace to the broader network — typically provisioned automatically by the platform the moment a container starts, and torn down when it stops.
+A **network namespace** is an isolated view of network state — its own interfaces, its own routing table, its own view of what "localhost" means — implemented by the operating system kernel, letting many isolated groups share one physical machine's hardware while each believes it has its own private network stack, similar in spirit to how Chapter 26's virtual interfaces let many VMs share physical network hardware. In the platforms this chapter describes, a **pod** — a group of one or more tightly coupled containers, the platform's actual unit of scheduling and network identity — is what ordinarily owns one network namespace and one **pod (container) address**; every container inside that pod shares the same namespace and the same address, and reaches its pod-mates over `localhost` exactly as if they were separate processes on one machine, while remaining fully isolated from every other pod's namespace. **Container Network Interface (CNI)** names the standardized plugin specification the platform calls the moment a pod starts: a networking plugin conforming to CNI receives that call and does the actual work of creating an interface connecting the new pod's namespace to the broader network, assigning it an address, and wiring up its routing, then reverses all of it when the pod stops. CNI is the specification and the plugin doing that provisioning work — not a name for the resulting interface itself, which is simply the pod's own network interface once CNI has finished setting it up.
 
-A **pod (container) address** is the network-layer address assigned to a specific running container instance — deliberately treated as unstable and disposable throughout this chapter's model, since the whole point of automatic scheduling is that any given instance can be replaced at any time, and nothing durable should depend on one specific instance's address remaining valid.
+A pod address is deliberately treated as unstable and disposable throughout this chapter's model, since the whole point of automatic scheduling is that any given instance can be replaced at any time, and nothing durable should depend on one specific instance's address remaining valid.
 
-A **service address**, by contrast, is a stable, durable address representing a *logical service* rather than any one instance — this is the "employee's phone number" in the opening story, remaining constant even as the specific instances answering behind it come and go continuously. **Service discovery** is the mechanism, usually DNS-like in interface but far more frequently updated than traditional DNS's caching model (Chapter 17) would tolerate, that resolves a stable service address to the current set of healthy instance addresses actually able to handle traffic at this moment.
+A **service address**, by contrast, is a stable, durable virtual address representing a *logical service* rather than any one instance — this is the "employee's phone number" in the opening story, remaining constant even as the specific instances answering behind it come and go continuously. Resolving a service's name to that virtual address is ordinary DNS-style resolution (Chapter 17); what makes it work for a constantly-changing set of backends is a separate layer underneath. **Service discovery** is the platform's continuously updated internal directory — conceptually a set of currently-healthy pod addresses, kept in sync with which instances actually are healthy right now — that the platform's own data-plane machinery (not the DNS answer itself, and not the ingress point) consults to actually deliver traffic sent to that virtual address to a live instance. Most requests to a service address never enumerate individual pods at the application or ingress level at all; the data plane just forwards to the service's virtual address, and the platform transparently spreads that traffic across whichever instances discovery currently lists as healthy. A **headless service** is the deliberate exception — one that skips the stable virtual address entirely and lets DNS resolution return individual pod addresses directly, for the less common cases where a caller genuinely needs to reach specific instances rather than "the service" as a whole.
 
-**Ingress** is infrastructure at a cluster's (or service's) boundary responsible for accepting and routing external traffic inward, typically incorporating reverse-proxy and load-balancing behavior (Chapters 16 and 22) purpose-built for the platform's internal service-discovery model. **Egress** is the mirrored concept for outbound traffic leaving that boundary, often subject to its own routing and policy.
+**Ingress** is a declared set of rules — which external host and path should route to which internal service — at a cluster's (or service's) boundary; an **ingress controller** (or gateway) is the separate, actually-running piece of infrastructure that reads those rules and does the accepting and routing work, typically incorporating reverse-proxy and load-balancing behavior (Chapters 16 and 22) purpose-built for the platform's internal service-discovery model. **Egress**, in this chapter's sense, is the mirrored concept for outbound traffic actually leaving that same outer boundary — not every internal, service-to-service call, which is ordinarily **east-west traffic** rather than egress, reserving that term for traffic crossing the boundary under discussion.
 
 A **sidecar proxy** is a proxy process deployed alongside — not instead of — an application container, in the same network namespace or tightly coupled to it, intercepting that specific container's network traffic to add cross-cutting behavior (encryption, retries, observability, policy enforcement) without the application's own code needing to implement any of it directly. A **service mesh** is the coordinated system of many such sidecar proxies, deployed consistently across a whole platform, giving operators uniform control over how every service's traffic is secured, observed, and routed — built on top of, not replacing, the ordinary networking (namespaces, pod addresses, service discovery) already described in this chapter.
 
 ```mermaid
 sequenceDiagram
     participant C as External client
-    participant I as Ingress
-    participant D as Service discovery
-    participant P1 as Pod instance A
-    participant P2 as Pod instance B (just started)
-    C->>I: Request to service address
-    I->>D: Resolve "api-service"
-    D-->>I: Currently healthy: Pod A, Pod B
-    I->>P2: Route to Pod B
-    Note over P1,P2: Pod addresses change as instances restart/scale;<br/>service address stays constant
+    participant IC as Ingress controller
+    participant DNS as Service DNS
+    participant DP as Data plane
+    participant PA as Pod A
+    participant PB as Pod B (just started)
+    C->>IC: Request for the API's hostname
+    IC->>DNS: Resolve service name
+    DNS-->>IC: Stable virtual service address
+    IC->>DP: Send to virtual service address
+    Note over DP: Continuously kept in sync<br/>by service discovery
+    DP->>PB: Forward to a currently healthy pod
+    Note over PA,PB: Pod addresses change as instances restart/scale;<br/>the virtual service address never does
 ```
 
-*Alt text: A sequence diagram showing an external client request reaching an ingress point, which asks service discovery for the currently healthy pod instances behind a stable service address, then routes to one of them — illustrating that the service address stays constant even as the specific pod instances behind it change.*
+*Alt text: A sequence diagram showing an ingress controller resolving a service name via DNS to a stable virtual service address, then sending traffic to that address; the platform's data plane, kept continuously in sync by service discovery, forwards it to whichever specific pod is currently healthy — illustrating that DNS resolves to a stable virtual address, not directly to a live pod, and that a separate data-plane layer does the per-request forwarding.*
 
 ## Packet-Journey Checkpoint
 
@@ -76,7 +79,7 @@ If `example.net`'s article service runs on a container platform, the café lapto
 
 **Why it's wrong:** Containers and VMs are both used to run isolated workloads, so they can appear to be different sizes of the same thing.
 
-**Correct intuition:** A container's network namespace shares the host machine's kernel rather than virtualizing an entire separate operating system the way a VM does (Chapter 26) — isolation happens at a different level, with different networking mechanics (namespaces and container network interfaces) than a VM's virtual interfaces.
+**Correct intuition:** A container shares the host machine's kernel rather than virtualizing an entire separate operating system the way a VM does (Chapter 26) — isolation happens at a different level, with different networking mechanics (namespaces and CNI-provisioned interfaces) than a VM's virtual interfaces. It's also worth being precise about which unit actually owns that isolation: the *pod*, not each individual container, is what owns one network namespace and one address — containers sharing a pod share that namespace too, reaching each other over `localhost`.
 
 **Analogy:** Stable reception number for moving workers (Chapter 27) — the mechanism this chapter builds is about identity and discovery for moving workloads, a different problem than how much a workload is isolated.
 
@@ -84,7 +87,7 @@ If `example.net`'s article service runs on a container platform, the café lapto
 
 **Why it's wrong:** "Service" sounds like it should name one continuously running piece of software actually handling traffic.
 
-**Correct intuition:** A Service is continuously-programmed routing and discovery state — pointing at whichever instances are currently healthy — not a single running process itself; the actual traffic handling happens through the platform's networking infrastructure being kept in sync with that state.
+**Correct intuition:** A Service is continuously-programmed routing and discovery state — a stable virtual address, plus a continuously updated record of which instances are currently healthy behind it — not a single running process itself. Resolving the Service's name gets a caller the stable virtual address; a separate data-plane layer, kept in sync with that healthy-instance record, is what actually forwards each request to a live instance.
 
 **Analogy:** The phone system's forwarding record isn't itself a person answering calls — it's the continuously updated instruction for where to send them.
 
@@ -112,9 +115,25 @@ If `example.net`'s article service runs on a container platform, the café lapto
 
 **Analogy:** Transit maps over common streets (Chapter 26) — a service mesh is another map layered on the same underlying infrastructure, not a replacement for the streets themselves.
 
+### *Any call from one internal service to another counts as egress*
+
+**Why it's wrong:** "Egress" and "leaving" both sound like they should describe any traffic headed toward some other destination, internal or not.
+
+**Correct intuition:** Ordinary service-to-service traffic within the same cluster or boundary — the backend calling a database, one microservice calling another — is usually called **east-west traffic**, distinct from the north-south traffic (a request arriving from, or a response returning to, outside that boundary). Egress specifically names traffic actually crossing the outer boundary under discussion outbound — reaching a different cluster, a different cloud, or the public Internet — not every internal hop a request happens to take.
+
+**Analogy:** Colleagues walking between offices on the same floor aren't "leaving the building" just because they're moving — egress is what happens at the building's own front door, not at every internal doorway.
+
+### *"Ingress" names one running piece of software*
+
+**Why it's wrong:** The worked example talks about a request "reaching an ingress point," which sounds like it's naming one concrete running thing.
+
+**Correct intuition:** Ingress, in the platforms this chapter describes, is ordinarily a declared set of routing rules — which external host and path map to which internal service — configuration, not a process. An **ingress controller** (or gateway) is the separate, actually-running proxy infrastructure that reads those declared rules and does the real work of accepting and routing traffic; the rules and the thing executing them are two different pieces, provided by two different layers.
+
+**Analogy:** A building directory listing which company occupies which floor isn't the security desk that actually checks visitors in and sends them there — one is the posted rule, the other is the staff enforcing it.
+
 ## Practical Implications
 
-When reading a container-platform architecture diagram, distinguish a stable service address from any specific pod's address — troubleshooting "the service is unreachable" is a different investigation from troubleshooting "this one instance is unhealthy." When evaluating a service mesh, remember its sidecar proxies add real behavior (retries, encryption, policy) at a real network hop, not a purely abstract control-plane concept.
+When reading a container-platform architecture diagram, distinguish a stable service address from any specific pod's address — troubleshooting "the service is unreachable" is a different investigation from troubleshooting "this one instance is unhealthy," and from "the ingress controller itself is misconfigured or down," a third, separate possibility. When evaluating a service mesh, remember its sidecar proxies add real behavior (retries, encryption, policy) at a real network hop, not a purely abstract control-plane concept. And when reasoning about internal traffic patterns or writing egress policy, keep east-west (service-to-service, inside the boundary) and true egress (actually crossing it) separate — a policy meant to restrict what leaves the cluster is the wrong tool for controlling which internal services can call which other internal services.
 
 ## Key Takeaway
 
@@ -122,12 +141,13 @@ When reading a container-platform architecture diagram, distinguish a stable ser
 
 ## What to Remember
 
-- A network namespace gives each container its own isolated view of network state on a shared kernel.
+- A pod, not each individual container, owns one network namespace and one address; containers sharing a pod reach each other over `localhost`.
+- CNI is the plugin specification the platform calls to provision a pod's network interface, address, and routing — not a name for the resulting interface itself.
 - A pod address is deliberately unstable and disposable, tied to one specific, replaceable instance.
-- A service address is stable, representing a logical service rather than any one instance.
-- Service discovery continuously resolves a service address to currently healthy instance addresses.
-- Ingress and egress handle traffic crossing a cluster's or service's boundary, inbound and outbound.
-- A sidecar proxy adds cross-cutting behavior to one container's traffic without changing its application code.
+- A service address is a stable virtual address representing a logical service; resolving its name is ordinary DNS, but a separate data-plane layer, kept in sync by service discovery, does the actual per-request forwarding to a healthy instance.
+- Ingress is declared routing configuration; an ingress controller (or gateway) is the separate running infrastructure that reads it and does the work.
+- Service-to-service traffic inside a boundary is east-west traffic; egress specifically means traffic actually crossing that boundary outbound.
+- A sidecar proxy adds cross-cutting behavior to one pod's traffic without changing its application code.
 - A service mesh coordinates many sidecar proxies platform-wide, built on top of existing networking, not replacing it.
 
 ## The Next Obvious Question
@@ -136,10 +156,10 @@ When reading a container-platform architecture diagram, distinguish a stable ser
 
 ---
 
-**Glossary terms added this chapter:** Network namespace, Container network interface, Pod (container) address, Service address, Service discovery, Ingress, Egress, Sidecar proxy, Service mesh → append to `/glossary.md`
+**Glossary terms added this chapter:** Network namespace, Pod, Container Network Interface (CNI), Pod (container) address, Service address, Service discovery, Headless service, Ingress, Ingress controller, Egress, East-west traffic, Sidecar proxy, Service mesh → append to `/glossary.md`
 
-**Misconceptions logged this chapter:** k8s-service-stable-instance (enriched, see `/misconceptions.md`) → append to `/misconceptions.md`
+**Misconceptions logged this chapter:** k8s-service-stable-instance (enriched, see `/misconceptions.md`); two new in-chapter-only misconceptions added (east-west vs. egress conflation, Ingress-as-one-process) — not added to the master registry, following the established pattern for supplementary chapter-specific misconceptions
 
-**Concept-graph entries checked off:** network-namespace, container-network-interface, pod-address, service-address-and-discovery, ingress-egress, sidecar-proxy, service-mesh → update `/concept-graph.yaml`, regenerate `/concept-graph.md`
+**Concept-graph entries checked off:** network-namespace, pod, container-network-interface, pod-address, service-address-and-discovery, headless-service, ingress-egress, east-west-traffic, sidecar-proxy, service-mesh → update `/concept-graph.yaml`, regenerate `/concept-graph.md`
 
 **Diagrams used this chapter:** sequence (request resolving through ingress and service discovery to a live pod instance) → satisfies style-guide.md §4

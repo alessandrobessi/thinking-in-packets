@@ -42,7 +42,7 @@ Reliable delivery isn't just about resending lost data — it's also about not c
 
 **Congestion**, by contrast, is a property of the shared network path, not of either endpoint specifically — it's what happens when the combined traffic from many connections exceeds what some shared link or device along the path can actually carry, causing queues to build up and, eventually, packets to be dropped. Congestion control addresses a fundamentally different question from flow control: not "can this receiver keep up," but "is the shared path between sender and receiver currently oversubscribed."
 
-TCP's sender maintains a **congestion window** — its own internal estimate of how much data it can safely have in flight without contributing to (or getting caught by) congestion along the path. Unlike the receive window, nothing directly tells the sender what this number should be; there is no equivalent of a receiver openly advertising "the shared path can handle exactly this much." Instead, the sender has to infer network conditions indirectly, generally starting conservatively and gradually increasing its congestion window as acknowledgements confirm data is getting through cleanly — a pattern often called **acknowledgement clocking**, where the steady rhythm of incoming acknowledgements itself paces how quickly the sender ramps up. The moment packet loss is detected — inferred, in the absence of an acknowledgement, once a **retransmission timeout** expires — the sender treats that loss as a signal that it (or the aggregate of everyone sharing that path) pushed too hard, and shrinks its congestion window sharply rather than gradually, before cautiously growing again from there.
+TCP's sender maintains a **congestion window** — its own internal estimate of how much data it can safely have in flight without contributing to (or getting caught by) congestion along the path. Unlike the receive window, nothing directly tells the sender what this number should be; there is no equivalent of a receiver openly advertising "the shared path can handle exactly this much." Instead, the sender has to infer network conditions indirectly, generally starting conservatively and gradually increasing its congestion window as acknowledgements confirm data is getting through cleanly — a pattern often called **acknowledgement clocking**, where the steady rhythm of incoming acknowledgements itself paces how quickly the sender ramps up. Loss is usually inferred faster than that: later acknowledgements keep arriving for data sent after the lost segment, and several of these landing without ever acknowledging the missing one is itself a strong signal that segment didn't arrive, prompting a retransmission well before any timer expires. A **retransmission timeout** — the sender waiting a bounded amount of time with no relevant acknowledgement at all — is the fallback for cases where that faster signal never arrives, such as loss right at the end of a burst with nothing sent afterward to reveal the gap. Either way, once loss is detected, the sender treats it as a signal that it (or the aggregate of everyone sharing that path) pushed too hard, and shrinks its congestion window sharply rather than gradually, before cautiously growing again from there.
 
 At any given moment, the actual amount of data TCP is willing to have outstanding and unacknowledged is the *smaller* of the receive window and the congestion window — whichever constraint is currently tighter wins, exactly mirroring the warehouse story's two independent bottlenecks.
 
@@ -75,11 +75,11 @@ As the café laptop downloads `example.net`'s page and its accompanying resource
 
 ### *Packet loss always means a broken cable.*
 
-**Why it's wrong:** In modern networks, the overwhelming majority of packet loss comes from congestion — queues filling up and overflowing at some shared, oversubscribed link — not physical faults.
+**Why it's wrong:** On well-provisioned wired paths, a large share of ordinary packet loss does come from congestion — queues filling up and overflowing at some shared, oversubscribed link — rather than a physical fault, so it's tempting to treat "loss" and "congestion" as interchangeable.
 
-**Correct intuition:** TCP is actually designed to expect and interpret loss primarily as a congestion signal, not a hardware failure signal.
+**Correct intuition:** TCP's congestion control is built on the working assumption that loss usually signals congestion, and reacts to it that way — but loss has other real causes too: wireless interference and corruption, a route changing mid-connection, a link actively policing traffic to a rate limit, or a software queue dropping packets for reasons unrelated to shared-path oversubscription. That assumption is a deliberate, useful default, not a law of nature — it's also exactly why TCP performance can suffer unnecessarily on lossy wireless links, where the sender backs off for corruption loss that had nothing to do with congestion. Some networks avoid the ambiguity entirely with **Explicit Congestion Notification (ECN)**, where a congested router marks a packet instead of dropping it, letting a congestion signal arrive without any loss at all.
 
-**Analogy:** A traffic jam isn't caused by a broken road; it's caused by more vehicles trying to use the road than it can currently carry.
+**Analogy:** A traffic jam isn't caused by a broken road; it's caused by more vehicles trying to use the road than it can currently carry — but a slow trip can also come from a pothole or a stalled car, not every slowdown on the road is the same kind of problem.
 
 ### *TCP always uses all available bandwidth immediately.*
 
@@ -117,9 +117,10 @@ This is the mechanism behind advice like "don't just increase buffer sizes to fi
 
 - Flow control protects the receiver, using its advertised receive window; congestion control protects the shared network path, using the sender's own inferred congestion window.
 - The sender's actual data-in-flight limit is the smaller of these two independently tracked values.
-- Congestion isn't directly observable by the sender — it's inferred, primarily from loss detected via a retransmission timeout.
+- Congestion isn't directly observable by the sender — it's inferred, usually faster via duplicate acknowledgements around a gap, with a retransmission timeout as the fallback when no later acknowledgements arrive to reveal one.
 - TCP starts sending cautiously and grows its congestion window gradually, rather than assuming full path capacity is immediately safe.
 - Detected loss triggers a sharp reduction in the congestion window, not just a pause — this backoff behavior is what produces reasonable fairness among connections sharing a congested path.
+- Loss usually signals congestion, but not always — wireless corruption, route changes, and traffic policing can all cause loss unrelated to congestion; ECN offers a way to signal congestion without any loss at all.
 - Reliability (handshakes, acknowledgements, retransmission, congestion control) is a genuine trade-off with real overhead, not a free upgrade over UDP.
 
 ## The Next Obvious Question
@@ -128,7 +129,7 @@ This is the mechanism behind advice like "don't just increase buffer sizes to fi
 
 ---
 
-**Glossary terms added this chapter:** Receive window, Flow control, Congestion, Congestion window, Acknowledgement clocking, Retransmission timeout, Fairness (congestion control), Backoff → append to `/glossary.md`
+**Glossary terms added this chapter:** Receive window, Flow control, Congestion, Congestion window, Acknowledgement clocking, Retransmission timeout, Fairness (congestion control), Backoff, Explicit Congestion Notification (ECN) → append to `/glossary.md`
 
 **Misconceptions logged this chapter:** `flow-congestion-control-same` (enriched)
 

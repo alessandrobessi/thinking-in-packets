@@ -42,7 +42,7 @@ A **virtual interface** is a software-implemented network interface, presented t
 
 **Software-defined networking (SDN)** generalizes Chapter 11's data-plane/control-plane split: rather than each individual physical device independently working out its own forwarding behavior, a centralized (or logically centralized) control-plane system computes forwarding policy and programs it into the data-plane devices actually moving traffic — letting network behavior be defined and changed through software configuration rather than manually reconfiguring individual physical devices one at a time.
 
-A **cloud virtual network**, often called a Virtual Private Cloud (VPC), is a customer-defined logical network within a cloud provider's shared physical infrastructure — the customer gets their own address ranges, subnets (Chapter 6), and topology, built through SDN mechanisms on top of the provider's real, physical, massively shared underlay, isolated from other customers' virtual networks sharing that same physical infrastructure. A **virtual route table** (often paired with security-group-style policy) is the cloud-virtual-network equivalent of Chapter 9's routing table: a customer-configurable set of rules determining how traffic flows and is permitted within their own virtual network's logical topology, even though the actual physical forwarding underneath is entirely the provider's infrastructure.
+A **cloud virtual network**, often called a Virtual Private Cloud (VPC), is a customer-defined logical network within a cloud provider's shared physical infrastructure — the customer gets their own address ranges, subnets (Chapter 6), and topology, built through SDN mechanisms on top of the provider's real, physical, massively shared underlay, isolated from other customers' virtual networks sharing that same physical infrastructure. A **virtual route table** is the cloud-virtual-network equivalent of Chapter 9's routing table specifically: a customer-configurable set of rules determining which path traffic takes within their own virtual network's logical topology, even though the actual physical forwarding underneath is entirely the provider's infrastructure. Whether that traffic is *permitted* at all is a separate question, answered by a distinct mechanism — security groups, network ACLs, or equivalent firewall policy (Chapter 16) — layered alongside the route table, not folded into it; a cloud architecture can route traffic somewhere perfectly correctly and still block it there, or vice versa, because forwarding and permission are enforced by two different pieces of configuration.
 
 ```mermaid
 flowchart LR
@@ -100,7 +100,7 @@ If `example.net`'s article server (from the café laptop's Chapter 20 journey) i
 
 **Why it's wrong:** A private, customer-specific address range feels like it should mean total separation from every other customer.
 
-**Correct intuition:** Isolation is enforced by the provider's SDN policy and virtual route tables/security groups, which are software configuration — a misconfiguration in that policy can still expose traffic in ways private addressing alone wouldn't prevent.
+**Correct intuition:** Isolation is enforced by the provider's SDN policy — route tables controlling where traffic can even go, and separate security-group/firewall policy controlling whether it's permitted once it gets there — all of it software configuration, not a property of the address range itself. A misconfiguration in either piece can still expose traffic in ways private addressing alone wouldn't prevent.
 
 **Analogy:** A private bus route drawn on the shared map is only as private as the transit authority's actual access rules make it — the map itself doesn't enforce anything.
 
@@ -119,7 +119,7 @@ When reading a cloud architecture diagram, remember that every "private network"
 - An overlay is a logical network of tunnels, layered on and fully dependent on its physical underlay.
 - SDN separates centralized policy computation (control plane) from distributed packet forwarding (data plane).
 - A cloud VPC is a customer-defined logical network built through SDN on shared physical infrastructure.
-- A virtual route table is the cloud-network equivalent of an ordinary routing table, customer-configurable.
+- A virtual route table is the cloud-network equivalent of an ordinary routing table, customer-configurable — it controls where traffic goes, not whether it's permitted; that's a separate job for security groups/NACLs/firewall policy.
 - Underlay failures and limitations always affect every overlay built on top of them.
 
 ## The Next Obvious Question

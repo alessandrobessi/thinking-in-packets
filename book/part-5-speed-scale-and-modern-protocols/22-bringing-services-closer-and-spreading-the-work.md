@@ -30,7 +30,7 @@ Consider three different requests hitting a busy online retailer's website, and 
 
 **A personalized recommendation, fetched from an API.** Every user's response is different, computed specifically for their account and browsing history at the moment of the request. There is no static file to place copies of — this request has to actually reach a server capable of running that computation, though which specific server among several equivalent ones handles it can still be chosen based on which is least busy right now.
 
-**A large video segment, part of a product demo.** Like the photo, the content is identical for every viewer, but it's large enough that even a small amount of added distance-delay per byte adds up to a noticeably slower start, and enough people watch simultaneously that serving every viewer from one origin would saturate its outbound capacity even if the content were small.
+**A large video segment, part of a product demo.** Like the photo, the content is identical for every viewer, but its size makes distance costly in a different way than the tiny photo: propagation delay itself doesn't multiply per byte (Chapter 21 already established it as a fixed, one-time cost of the path, paid once), but a distant origin means a higher round-trip time, and round-trip time is what a connection's handshakes are paid in and what governs how quickly TCP's congestion window can ramp up to actually use the available bandwidth (Chapter 21's bandwidth-delay product). A large transfer over a high-RTT path spends more of its time throughput-limited before it ever reaches full speed, and enough people watch simultaneously that serving every viewer from one origin would saturate its outbound capacity even if the content were small.
 
 Three requests, three different jobs: the photo wants **caching** near the user; the personalized API response wants **load balancing** across capable backends, because caching a per-user answer for everyone else would be simply wrong; the video wants both — cached copies placed close to viewers, delivered through infrastructure built to sustain heavy simultaneous demand. Treating all three the same way — either caching everything or caching nothing — would break at least one of them.
 
@@ -118,7 +118,7 @@ When evaluating "we use a CDN" or "we're load balanced," ask what specifically i
 ## What to Remember
 
 - Caching avoids repeating work for requests whose answer doesn't change between askers.
-- A CDN's edge locations place cached copies near users, protecting the origin and cutting propagation delay.
+- A CDN's edge locations place cached copies near users, protecting the origin and cutting the fixed, one-time propagation delay and round-trip time paid to reach it — propagation delay itself doesn't scale with transfer size; a lower RTT to a nearer edge mainly helps a large transfer by letting it reach full throughput sooner.
 - Load balancing spreads genuinely new, per-request work across multiple capable backends.
 - Health checks let a load balancer automatically stop sending traffic to a failing backend.
 - Replication adds both capacity and resilience, but can introduce brief inconsistency between copies.

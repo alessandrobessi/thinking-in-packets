@@ -26,11 +26,11 @@ Once the café laptop has a private, verified TLS session open to `example.net`'
 
 Trace a login followed by a request for a page only logged-in users can see, and notice exactly what travels on each leg, and what the server needs to remember between them.
 
-**The login request.** The browser sends an HTTP request: the method `POST` (indicating "submit this data to be processed," as opposed to simply retrieving something), the path `/login`, and a body containing the submitted username and password. The server checks the credentials and, if they're valid, sends back a response: a status code `200` (success), and — critically — a header telling the browser to store a specific cookie, a small piece of data the server generated to represent "this browser has an authenticated session."
+**The login request.** The browser sends an HTTP request: the method `POST` (asking the server to process the enclosed data as a submission, an action that may change something server-side), the path `/login`, and a body containing the submitted username and password. The server checks the credentials and, if they're valid, sends back a response: a status code `200` (success), and — critically — a header telling the browser to store a specific cookie, a small piece of data the server generated to represent "this browser has an authenticated session."
 
-**The authenticated page request.** The browser now requests `/account`, method `GET` this time (retrieving something, submitting nothing). Automatically, without the user doing anything extra, the browser includes that same cookie in this request's headers. The server looks up the cookie's value against its own stored session data, finds a match, and recognizes this request as coming from the already-authenticated user — then responds with status `200` and the account page's content in the body.
+**The authenticated page request.** The browser now requests `/account`, method `GET` this time (asking the server to retrieve a representation of that resource, without asking it to change anything). Automatically, without the user doing anything extra, the browser includes that same cookie in this request's headers. The server looks up the cookie's value against its own stored session data, finds a match, and recognizes this request as coming from the already-authenticated user — then responds with status `200` and the account page's content in the body.
 
-**What if the cookie were missing or invalid?** The server would have no way to recognize this request as belonging to a logged-in user — it would respond instead with a status like `401` (unauthorized) or redirect back toward the login page. Nothing about HTTP itself carries a persistent notion of "this specific browser is currently logged in" between requests — each request is handled independently, and it's the cookie, deliberately carried along and deliberately checked against server-side session state, that makes the appearance of a continuous, logged-in experience possible at all.
+**What if the cookie were missing or invalid?** The server would have no way to recognize this request as belonging to a logged-in user — it would respond instead with a status like `401` (meaning valid authentication is required and wasn't provided) or redirect back toward the login page. Nothing about HTTP itself carries a persistent notion of "this specific browser is currently logged in" between requests — each request is handled independently, and it's the cookie, deliberately carried along and deliberately checked against server-side session state, that makes the appearance of a continuous, logged-in experience possible at all.
 
 ## Core Intuition
 
@@ -40,9 +40,9 @@ HTTP gives a networked exchange a specific, structured shape: a request names an
 
 A **URL** (Uniform Resource Locator) identifies both a specific resource and how to reach it — `https://example.net/article` names the scheme (HTTPS), the host (`example.net`, the thing DNS resolved in Chapter 17), and the **path** (`/article`) identifying a specific resource on that host.
 
-An **HTTP request** consists of a **method** — most commonly `GET` (retrieve a resource, submitting nothing) or `POST` (submit data to be processed) — a path, a set of **headers** (metadata about the request: what content types are acceptable, what cookies are being carried, what browser is making the request, and more), and, for methods like `POST`, a **body** carrying the actual submitted data.
+An **HTTP request** consists of a **method** — most commonly `GET`, requesting a resource be retrieved without asking the server to change anything, or `POST`, asking the server to process the enclosed data as a submission — a path, a set of **headers** (metadata about the request: what content types are acceptable, what cookies are being carried, what browser is making the request, and more), and, for methods like `POST`, a **body** carrying the actual submitted data. The real distinction between methods is what they ask the server to *do* — `GET` requests are meant to be safe, read-only, and repeatable without side effects, while `POST` requests may change something server-side — not simply whether a body happens to be present; a `GET` request can technically carry a body, and other methods (`PUT`, `DELETE`, `PATCH`, among others) exist for actions this chapter doesn't need to enumerate.
 
-An HTTP **response** carries a **status code** — a three-digit number in a well-known range, such as `200` for success, `404` for "resource not found," `401` for "not authorized," or `500` for "the server encountered an error" — along with its own headers and, usually, a body containing the requested content or an explanation of what went wrong.
+An HTTP **response** carries a **status code** — a three-digit number in a well-known range, such as `200` for success, `404` for "resource not found," or `500` for "the server encountered an error." Two codes are worth distinguishing carefully because their names invite confusion: `401` means the request lacks valid authentication — the server needs the client to prove who it is, and hasn't been given anything that works — while `403` means the server understood exactly who's asking and is refusing anyway, because that identity isn't permitted to do this, authenticated or not. "Unauthorized" (401) is really "unauthenticated"; "Forbidden" (403) is the one that actually means a permission was denied.
 
 HTTP is a **stateless protocol**: nothing in the protocol itself links one request to any previous one. Each request is handled as if it were the very first interaction the server has ever had with that client. A **cookie** is a small piece of data a server asks a browser to store and automatically resend with future requests to that same site; a **session** is server-side state — often keyed by a value stored in that cookie — that lets the server recognize a sequence of otherwise-independent requests as belonging to the same ongoing interaction. The statelessness is in the protocol; the appearance of continuity is built on top of it, deliberately, using cookies and server-side session state together.
 
@@ -70,9 +70,17 @@ Inside the TLS session Chapter 18 established, the café laptop's browser now se
 
 **Analogy:** A finished, plated restaurant meal looks like one thing arriving at the table, but it's the result of many separate kitchen stations each preparing one component.
 
+### *A `401` response means the same thing as a `403` response.*
+
+**Why it's wrong:** Both codes show up as "access denied" in casual conversation, and `401`'s official name — "Unauthorized" — sounds like it's describing a permissions problem, which is exactly what `403` actually is.
+
+**Correct intuition:** `401` means the server doesn't yet have valid proof of who's asking — it's an authentication problem, fixed by logging in or presenting valid credentials. `403` means the server knows exactly who's asking and has decided that identity isn't allowed to do this — it's an authorization problem that logging in again won't fix, because the client may already be correctly authenticated.
+
+**Analogy:** A `401` is a locked door with no key presented yet; a `403` is a door that recognizes your specific keycard and still won't open for you.
+
 ## Practical Implications
 
-When a page "half-loads" — text visible but images broken, or styling missing — that's a direct, visible sign that some of its many separate HTTP requests failed while others succeeded, not evidence that "the whole page request" partially failed. A status code is the fastest first signal in any HTTP debugging: a `404` means the wrong path was requested, a `401`/`403` means an authorization problem, a `500` means the server itself failed while handling an otherwise-valid request — three completely different problems that "the page won't load" collapses into one vague symptom. And because HTTP is stateless by design, any bug where a user appears to be "randomly logged out" is worth investigating as a cookie or session-state problem specifically, not a vague, unexplained network glitch.
+When a page "half-loads" — text visible but images broken, or styling missing — that's a direct, visible sign that some of its many separate HTTP requests failed while others succeeded, not evidence that "the whole page request" partially failed. A status code is the fastest first signal in any HTTP debugging: a `404` means the wrong path was requested, a `401` means the client needs to authenticate and hasn't, a `403` means the client's identity is known and specifically not permitted, and a `500` means the server itself failed while handling an otherwise-valid request — four completely different problems that "the page won't load" collapses into one vague symptom, and conflating 401 with 403 specifically points a fix effort at the wrong layer (a login problem versus a permissions problem). And because HTTP is stateless by design, any bug where a user appears to be "randomly logged out" is worth investigating as a cookie or session-state problem specifically, not a vague, unexplained network glitch.
 
 ## Key Takeaway
 
@@ -81,8 +89,9 @@ When a page "half-loads" — text visible but images broken, or styling missing 
 ## What to Remember
 
 - A URL names a scheme, a host, and a path identifying a specific resource.
-- An HTTP request has a method (like GET or POST), a path, headers, and often a body.
+- An HTTP request has a method (like GET or POST), a path, headers, and often a body — the method is defined by what it asks the server to do, not simply by whether it carries a body.
 - An HTTP response has a status code, headers, and usually a body.
+- `401` means missing or invalid authentication; `403` means the server knows who's asking and denies the request anyway — despite the confusing name, `401` is really "unauthenticated."
 - HTTP is stateless: nothing in the protocol itself links one request to a previous one.
 - Cookies plus server-side session state are what create the appearance of an ongoing, logged-in experience on top of a stateless protocol.
 - HTTP is the transport-and-structure layer; HTML/CSS/JS/images are payloads it carries, not the protocol itself.

@@ -6,7 +6,7 @@
 
 **Prerequisites:** IP addresses identify interfaces, not applications (Ch. 6); packets are delivered to a host via routing (Ch. 9-11)
 
-**New concepts introduced:** process, port, socket, source and destination port, connection tuple, demultiplexing
+**New concepts introduced:** process, port, socket, source and destination port, five-tuple, demultiplexing
 
 ---
 
@@ -34,15 +34,15 @@ An IP address gets a packet to the correct *machine* — the equivalent of getti
 
 A **process** is a running instance of a program — the browser, the video-call software, the update-checker, each a separate process on the laptop, each independently capable of sending and receiving network traffic.
 
-A **port** is a number, from 0 to 65535, used at the transport layer to identify a specific communication endpoint on a host. When a process wants to receive network traffic, it doesn't just wait for anything addressed to the host's IP — it asks the operating system to associate it with a specific port, and only traffic explicitly directed to that port gets handed to that process. A web server conventionally listens on port 443 for encrypted traffic; that's a convention, not a physical or permanent binding — nothing stops a different application from using that same number on a machine that isn't running a web server.
+A **port** is a number, from 0 to 65535, used at the transport layer to identify a specific communication endpoint on a host. When a process wants to receive network traffic, it doesn't just wait for anything addressed to the host's IP — it asks the operating system to associate it with a specific port, and, ordinarily, only traffic explicitly directed to that port gets handed to that process. In the common case that's a clean one-to-one relationship, but the port itself identifies a transport-layer endpoint, not a process directly: the operating system's binding rules are what connect a port to whichever process (or, in some configurations, processes) is actually listening on it at a given moment, and a single process can hold many ports open at once just as easily as one port can, under specific configuration, be shared. A web server conventionally listens on port 443 for encrypted traffic; that's a convention, not a physical or permanent binding — nothing stops a different application from using that same number on a machine that isn't running a web server.
 
-Every packet carrying transport-layer information includes both a **source port** and a **destination port** — the port the sending process used, and the port the receiving process is expected to be listening on. Combined with the source and destination IP addresses, and the transport protocol in use (Ch. 13-14 introduce the two main options, UDP and TCP), these four values form a **connection tuple**: (source IP, source port, destination IP, destination port, protocol). This tuple is what actually, uniquely identifies one specific ongoing conversation — not the IP address alone, and not the port alone, but the specific combination of all of them together.
+Every packet carrying transport-layer information includes both a **source port** and a **destination port** — the port the sending process used, and the port the receiving process is expected to be listening on. Combined with the source and destination IP addresses, and the transport protocol in use (Ch. 13-14 introduce the two main options, UDP and TCP), these five values together form what's conventionally called a **five-tuple**: (source IP, source port, destination IP, destination port, protocol). This five-tuple is what actually, uniquely identifies one specific ongoing conversation — not the IP address alone, and not the port alone, but the specific combination of all five together.
 
-This is what makes it possible for a server to hold open connections with thousands of different clients on the very same listening port at once. Each client has a different source IP (and often a different source port too), so even though every one of those connections shares the same destination IP and destination port on the server side, every connection tuple is still unique. The server isn't tracking "the connection on port 443" as if there could only be one; it's tracking many separate tuples that all happen to share that one destination port.
+This is what makes it possible for a server to hold open connections with thousands of different clients on the very same listening port at once. Each client has a different source IP (and often a different source port too), so even though every one of those connections shares the same destination IP and destination port on the server side, every five-tuple is still unique. The server isn't tracking "the connection on port 443" as if there could only be one; it's tracking many separate tuples that all happen to share that one destination port.
 
-A **socket** is the operating system's own handle representing one endpoint of a specific connection tuple — the object a process actually reads from and writes to, through which the operating system quietly handles matching incoming packets to the right conversation and outgoing data to the right destination.
+A **socket** is the operating system's own handle representing one endpoint of a specific five-tuple — the object a process actually reads from and writes to, through which the operating system quietly handles matching incoming packets to the right conversation and outgoing data to the right destination.
 
-**Demultiplexing** is the general name for this matching process: given an incoming packet, using its connection tuple (or, for a listening socket, just its destination port) to determine which one process, out of everything running on the machine, should actually receive it. It is the mirror image of what the operating system did when the outgoing packets from three different processes were, in the reverse direction, all sent out sharing the same source IP address.
+**Demultiplexing** is the general name for this matching process: given an incoming packet, using its five-tuple (or, for a listening socket, just its destination port) to determine which one process, out of everything running on the machine, should actually receive it. It is the mirror image of what the operating system did when the outgoing packets from three different processes were, in the reverse direction, all sent out sharing the same source IP address.
 
 ```mermaid
 graph TD
@@ -56,7 +56,7 @@ graph TD
     C -->|"tuple: laptopIP:51510 ↔ updateserverIP:443"| Internet3[( )]
 ```
 
-*Alt text: One laptop with one shared IP address running three separate processes, each bound to a different local port, producing three distinct connection tuples even though the destination port (443) is the same in every case.*
+*Alt text: One laptop with one shared IP address running three separate processes, each bound to a different local port, producing three distinct five-tuples even though the destination port (443) is the same in every case.*
 
 ## Packet-Journey Checkpoint
 
@@ -82,7 +82,7 @@ When the café laptop's browser goes to fetch `example.net`'s page, the operatin
 
 ### *An IP address and port identify the same thing.*
 
-**Why it's wrong:** An IP address identifies a machine's interface (Ch. 6); a port identifies a specific process's endpoint on that machine. They answer different questions at different layers.
+**Why it's wrong:** An IP address identifies a machine's interface (Ch. 6); a port identifies a transport-layer endpoint on that machine, which the operating system's binding rules then connect to a specific process. They answer different questions at different layers.
 
 **Correct intuition:** The IP address gets you to the right building; the port gets you to the right apartment inside it. Conflating them collapses two genuinely separate jobs into one.
 
@@ -90,7 +90,7 @@ When the café laptop's browser goes to fetch `example.net`'s page, the operatin
 
 ### *A server can support only one client per listening port.*
 
-**Why it's wrong:** A listening port accepts connections from many different clients simultaneously; what keeps them distinct isn't the port, it's the full connection tuple, which differs by client IP (and often client port) even when the destination port is identical for all of them.
+**Why it's wrong:** A listening port accepts connections from many different clients simultaneously; what keeps them distinct isn't the port, it's the full five-tuple, which differs by client IP (and often client port) even when the destination port is identical for all of them.
 
 **Correct intuition:** Thousands of clients can be talking to a server's port 443 at once, each one a separate, fully distinguishable conversation.
 
@@ -98,7 +98,7 @@ When the café laptop's browser goes to fetch `example.net`'s page, the operatin
 
 ## Practical Implications
 
-This is the mechanism behind "port 443 is blocked" or "the service isn't listening on that port" as debugging statements — they're claims about which processes on which machines are configured to receive traffic on a specific number, not claims about physical wiring. It also explains why a single server can genuinely serve enormous numbers of simultaneous clients on one public IP and one listening port: the scaling constraint isn't "how many clients can share this port," it's the (much larger) space of distinguishable connection tuples and the server's own capacity to handle them.
+This is the mechanism behind "port 443 is blocked" or "the service isn't listening on that port" as debugging statements — they're claims about which processes on which machines are configured to receive traffic on a specific number, not claims about physical wiring. It also explains why a single server can genuinely serve enormous numbers of simultaneous clients on one public IP and one listening port: the scaling constraint isn't "how many clients can share this port," it's the (much larger) space of distinguishable five-tuples and the server's own capacity to handle them.
 
 ## Key Takeaway
 
@@ -108,9 +108,9 @@ This is the mechanism behind "port 443 is blocked" or "the service isn't listeni
 
 - A process is a running program; a port is a number identifying a specific communication endpoint on a host, used at the transport layer.
 - Every transport-layer packet carries a source port and a destination port alongside its source and destination IP addresses.
-- A connection tuple — source IP, source port, destination IP, destination port, protocol — is what actually, uniquely identifies one conversation.
-- A socket is the operating system's handle for one endpoint of a specific connection tuple.
-- Demultiplexing is how the operating system routes an incoming packet to the correct process based on its connection tuple.
+- A five-tuple — source IP, source port, destination IP, destination port, protocol — is what actually, uniquely identifies one conversation.
+- A socket is the operating system's handle for one endpoint of a specific five-tuple.
+- Demultiplexing is how the operating system routes an incoming packet to the correct process based on its five-tuple.
 - A shared destination port (like 443) does not limit a server to one client — different client tuples keep every connection distinct.
 
 ## The Next Obvious Question
@@ -119,10 +119,10 @@ This is the mechanism behind "port 443 is blocked" or "the service isn't listeni
 
 ---
 
-**Glossary terms added this chapter:** Process, Port, Source port, Destination port, Connection tuple, Socket, Demultiplexing → append to `/glossary.md`
+**Glossary terms added this chapter:** Process, Port, Source port, Destination port, Five-tuple, Socket, Demultiplexing → append to `/glossary.md`
 
 **Misconceptions logged this chapter:** `ports-are-physical-connectors` (enriched)
 
 **Concept-graph entries checked off:** process-and-port, socket, multiplexing-transport → `written: true`, `key_takeaway` set
 
-**Diagrams used this chapter:** state-snapshot (three simultaneous connection tuples sharing one IP)
+**Diagrams used this chapter:** state-snapshot (three simultaneous five-tuples sharing one IP)

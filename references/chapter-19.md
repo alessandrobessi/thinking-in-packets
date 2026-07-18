@@ -4,7 +4,7 @@ Per-chapter citation trail (blueprint.md §19).
 
 ## Standards cited
 
-- RFC 9110, *HTTP Semantics* — current consolidated specification of methods, status codes, headers (obsoletes RFC 7230-7231's semantics portions).
+- RFC 9110, *HTTP Semantics* — current consolidated specification of methods, status codes, headers (obsoletes RFC 7230-7231's semantics portions). §9.3.1 (GET) and §9.3.3 (POST) are the source for this chapter's method-semantics correction (safe/read-only vs. processing-with-side-effects, not merely body presence); §15.5.2 (401 Unauthorized) and §15.5.4 (403 Forbidden) are the source for this chapter's status-code correction — RFC 9110 itself notes 401's name is a historical misnomer for what is actually an authentication failure.
 - RFC 9112, *HTTP/1.1* — the specific wire format referenced for this chapter's request/response shape.
 - RFC 6265, *HTTP State Management Mechanism* — cookies.
 - RFC 3986, *Uniform Resource Identifier (URI): Generic Syntax* — URL/URI structure (scheme, host, path).

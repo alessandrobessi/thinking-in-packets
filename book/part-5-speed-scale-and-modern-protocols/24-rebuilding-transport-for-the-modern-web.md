@@ -26,13 +26,13 @@ TCP is the public road system: implemented deep inside operating-system kernels 
 
 Follow a phone on a video call that begins the call over home Wi-Fi and then physically leaves the house, switching to a cellular connection mid-call, while the call also happens to be carrying several logically distinct pieces of data — the video stream, the audio stream, and a text chat sidebar — over the same connection.
 
-**Under a TCP-based design.** A TCP connection is identified, in part, by the combination of source and destination IP addresses and ports (Chapter 12's connection tuple). The moment the phone switches from Wi-Fi to cellular, its IP address changes — and that changes the connection tuple, which TCP treats as a fundamentally different connection. The existing TCP connection cannot simply continue; it has to be torn down and a brand new one established, incurring fresh handshake delay exactly at the moment connectivity was already disrupted. And if a single packet belonging to, say, the audio stream is lost, TCP's ordered byte-stream guarantee (Chapter 14) can stall delivery of the video and chat data riding on the same connection too, even though they have nothing to do with the lost audio packet — the same head-of-line-blocking problem Chapter 23 left unresolved.
+**Under a TCP-based design.** A TCP connection is identified, in part, by the combination of source and destination IP addresses and ports (Chapter 12's five-tuple). The moment the phone switches from Wi-Fi to cellular, its IP address changes — and that changes the five-tuple, which TCP treats as a fundamentally different connection. The existing TCP connection cannot simply continue; it has to be torn down and a brand new one established, incurring fresh handshake delay exactly at the moment connectivity was already disrupted. And if a single packet belonging to, say, the audio stream is lost, TCP's ordered byte-stream guarantee (Chapter 14) can stall delivery of the video and chat data riding on the same connection too, even though they have nothing to do with the lost audio packet — the same head-of-line-blocking problem Chapter 23 left unresolved.
 
 **Under a QUIC-based design.** The connection is identified by a **connection ID** chosen by QUIC itself, independent of IP address or port — so when the phone's IP address changes from switching networks, QUIC can recognize the same ongoing connection continuing under a new network path and keep going, a capability called **connection migration**, without tearing anything down or renegotiating from scratch. And because QUIC's video, audio, and chat data ride on genuinely **independent streams** at the transport level itself (not just at the HTTP level, the way Chapter 23's HTTP/2 streams still shared one underlying TCP byte stream), a lost audio packet only stalls the audio stream's own delivery — the video and chat streams continue delivering normally in the meantime.
 
 ## Core Intuition
 
-QUIC solves two problems TCP structurally cannot, without waiting for TCP itself to change everywhere it's deployed: it separates a connection's identity from the IP address and port carrying it, so a connection can survive a network change; and it gives each of its multiplexed streams truly independent loss recovery, so one stream's lost packet no longer stalls every other stream sharing the connection. It does this by building a new, reliable, ordered, congestion-controlled transport as ordinary application-level software running over UDP, instead of trying to extend TCP itself.
+QUIC solves two problems TCP structurally cannot, without waiting for TCP itself to change everywhere it's deployed: it separates a connection's identity from the IP address and port carrying it, so a connection can survive a network change; and it gives each of its multiplexed streams independent loss-recovery state, so a lost stream's data no longer forces every *unrelated* stream to wait behind it the way TCP's single shared byte stream does. It does this by building a new, reliable, ordered, congestion-controlled transport as ordinary application-level software running over UDP, instead of trying to extend TCP itself.
 
 ## Technical Explanation
 
@@ -40,7 +40,7 @@ QUIC solves two problems TCP structurally cannot, without waiting for TCP itself
 
 QUIC identifies a connection using a **connection ID** — a value chosen by the endpoints themselves — rather than the traditional IP-and-port tuple TCP relies on. Because this identifier survives an IP address change, QUIC supports **connection migration**: an ongoing connection can continue across a network transition (Wi-Fi to cellular, one Wi-Fi network to another) without being torn down and rebuilt, exactly the capability the worked example's phone call depended on.
 
-Within one QUIC connection, multiple **independent streams** can be open concurrently, each with its own delivery and loss-recovery state — this is the crucial structural difference from HTTP/2-over-TCP (Chapter 23): QUIC's streams are independent at the *transport* layer itself, not layered as a multiplexing trick on top of one shared ordered byte stream. A lost packet belonging to one stream triggers retransmission and brief delay for that stream alone; unrelated streams' data continues being delivered to the application without waiting.
+Within one QUIC connection, multiple **independent streams** can be open concurrently, each with its own delivery and loss-recovery state — this is the crucial structural difference from HTTP/2-over-TCP (Chapter 23): QUIC's streams are independent at the *transport* layer itself, not layered as a multiplexing trick on top of one shared ordered byte stream. A single QUIC packet on the wire can still carry frames belonging to more than one stream bundled together for efficiency, so losing that one packet can delay every stream whose data happened to ride inside it — QUIC doesn't guarantee that a lost packet only ever touches one stream. What it does guarantee is narrower but still the important part: recovery and delivery are tracked per stream, so a stream with no data in the lost packet is never forced to stall behind someone else's retransmission the way TCP's one shared ordered byte stream would force it to. The benefit is the removal of *unrelated*-stream blocking, not a promise that loss is always perfectly contained to a single stream.
 
 QUIC also integrates encryption (Chapter 18's TLS, specifically TLS 1.3) directly into its handshake and treats most of its own transport-level control information — not just application payload — as **encrypted transport metadata**, protecting far more of the exchange from casual observation or tampering by a network intermediary than TCP's traditionally unencrypted header ever did. One practical consequence: because the connection setup and cryptographic handshake are combined rather than sequential, a QUIC connection to a server the client has recently talked to before can, under the right conditions, begin sending application data immediately alongside its very first handshake message — an intuition usually called **zero-round-trip (0-RTT) resumption** — rather than needing a separate round trip purely for transport setup before a separate round trip purely for TLS, the way a fresh TCP-then-TLS connection historically required.
 
@@ -78,7 +78,7 @@ If `https://example.net/article`'s server supports HTTP/3, the café laptop's br
 
 **Why it's wrong:** Since QUIC reimplements transport from scratch, it can seem like it might have dropped less-visible mechanisms like congestion control along the way.
 
-**Correct intuition:** QUIC implements its own congestion control (conceptually similar in spirit to Chapter 15's TCP congestion control, adapted for QUIC's per-stream structure), still adapting to network conditions rather than sending without limit.
+**Correct intuition:** QUIC implements its own congestion control, conceptually similar in spirit to Chapter 15's TCP congestion control, still adapting to network conditions rather than sending without limit. That congestion control operates for the *connection as a whole* — one shared budget for how much unacknowledged data can be in flight across the whole path — not a separate independent budget per stream; streams get independent loss recovery (above), but they still share one connection's view of how congested the path currently is.
 
 **Analogy:** The shuttle service still has its own rules about how many vehicles it dispatches onto a congested road at once — running its own operation doesn't mean ignoring road conditions.
 
@@ -86,7 +86,7 @@ If `https://example.net/article`'s server supports HTTP/3, the café laptop's br
 
 **Why it's wrong:** Zero-round-trip resumption sounds like it should apply universally.
 
-**Correct intuition:** 0-RTT resumption only applies to a server the client has recently connected to before, under specific conditions; a first-ever connection to a new server still requires a real handshake.
+**Correct intuition:** 0-RTT resumption only applies to a server the client has recently connected to before, under specific conditions; a first-ever connection to a new server still requires a real handshake. It also comes with a real, structural limitation, not just a narrower use case: data sent in that very first 0-RTT flight is more vulnerable to replay — a network attacker who captures it can potentially resend it to the server again, which is not possible for data sent after the full handshake completes. Applications are expected to only put safely-repeatable requests in that first flight for exactly this reason, and QUIC deployments commonly restrict which kinds of requests are even allowed to use it.
 
 **Analogy:** A shuttle service can dispatch instantly to a regular customer's known, pre-approved pickup — a brand-new customer still needs an initial booking conversation first.
 
@@ -118,11 +118,11 @@ When a product claims to use QUIC or HTTP/3, the concrete benefits to expect are
 
 - TCP's deep kernel-level deployment makes it slow to evolve; QUIC sidesteps this by running as user-space software over UDP.
 - QUIC identifies connections by a connection ID, not IP address and port, enabling connection migration across network changes.
-- QUIC's streams are independent at the transport layer, so one stream's packet loss doesn't stall unrelated streams.
+- QUIC's streams have independent loss-recovery state, so a stream with no data in a lost packet never stalls behind another stream's retransmission — though one lost QUIC packet can still carry frames from more than one stream at once.
 - QUIC integrates TLS 1.3 into its own handshake and encrypts most transport metadata, not just application payload.
-- Zero-round-trip resumption can let a returning client send data immediately, under specific prior-connection conditions.
+- Zero-round-trip resumption can let a returning client send data immediately, under specific prior-connection conditions — but that first flight of data is more vulnerable to replay, so applications restrict what it's used for.
 - HTTP/3 is HTTP's multiplexed-streams model running over QUIC instead of TCP.
-- QUIC still implements its own congestion control — it does not send without limit.
+- QUIC still implements its own congestion control, shared across the whole connection rather than per stream — it does not send without limit.
 
 ## The Next Obvious Question
 

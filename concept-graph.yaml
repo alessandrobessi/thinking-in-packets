@@ -578,7 +578,7 @@ concepts:
     misconception_ids: [ports-are-physical-connectors]
     key_takeaway: book/part-3-end-to-end-conversations/12-from-a-host-to-a-process.md#key-takeaway
   - id: socket
-    name: Socket and connection tuple
+    name: Socket and five-tuple
     level: 5
     prerequisites: [process-and-port, ipv4-ipv6-address]
     introduced_in: 12
@@ -1143,10 +1143,18 @@ concepts:
     written: true
     misconception_ids: []
     key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
-  - id: container-network-interface
-    name: Container network interface
+  - id: pod
+    name: Pod
     level: 8
     prerequisites: [network-namespace]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: container-network-interface
+    name: Container Network Interface (CNI)
+    level: 8
+    prerequisites: [pod]
     introduced_in: 27
     written: true
     misconception_ids: []
@@ -1154,7 +1162,7 @@ concepts:
   - id: pod-address
     name: Pod/container address
     level: 8
-    prerequisites: [container-network-interface]
+    prerequisites: [pod, container-network-interface]
     introduced_in: 27
     written: true
     misconception_ids: [k8s-service-stable-instance]
@@ -1167,10 +1175,26 @@ concepts:
     written: true
     misconception_ids: [k8s-service-stable-instance]
     key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: headless-service
+    name: Headless service
+    level: 8
+    prerequisites: [service-address-and-discovery]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
   - id: ingress-egress
-    name: Ingress and egress
+    name: Ingress (config) and ingress controller; egress
     level: 8
     prerequisites: [service-address-and-discovery, proxy]
+    introduced_in: 27
+    written: true
+    misconception_ids: []
+    key_takeaway: book/part-6-networks-in-production/27-networking-moving-applications.md#key-takeaway
+  - id: east-west-traffic
+    name: East-west traffic
+    level: 8
+    prerequisites: [ingress-egress]
     introduced_in: 27
     written: true
     misconception_ids: []
