@@ -211,7 +211,7 @@ the real explanation lives in the chapter itself.
 | Container Network Interface (CNI) | The standardized plugin specification a platform calls to provision a new pod's network interface, address, and routing — names the specification and plugin, not the resulting interface. | Ch. 27 |
 | Pod (container) address | The network-layer address of a specific running pod, deliberately treated as unstable and disposable. | Ch. 27 |
 | Service address | A stable, durable virtual address representing a logical service rather than any one instance behind it. | Ch. 27 |
-| Service discovery | The platform's continuously updated internal directory of currently healthy pod addresses, consulted by the data plane to forward traffic sent to a service address — commonly selecting an instance once per connection/flow, not necessarily fresh per request. | Ch. 27 |
+| Service discovery | The platform's continuously updated record of currently healthy pod addresses, watched by control-plane components that keep the data plane's forwarding rules programmed to match — the data plane itself just follows those rules per packet, commonly staying with one instance per connection/flow rather than re-selecting per request. | Ch. 27 |
 | Headless service | A service that skips the stable virtual address and lets DNS resolution return individual pod addresses directly. | Ch. 27 |
 | Ingress | Declared routing configuration — which external host/path maps to which internal service — at a cluster's boundary, distinct from the ingress controller that executes it. | Ch. 27 |
 | Ingress controller | The running proxy infrastructure that reads Ingress configuration and does the actual work of accepting and routing external traffic inward. | Ch. 27 |

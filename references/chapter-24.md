@@ -74,6 +74,21 @@ Per-chapter citation trail (blueprint.md §19).
   Explanation's multi-stream-per-packet nuance; the underlying frame/
   packet-number accounting (RFC 9000 §13) is still not derived
   mechanically, per blueprint scope.
+- Fifth-pass correction: two more instances of "independent loss
+  recovery" survived earlier passes' fixes — one in the congestion-
+  control misconception ("streams get independent loss recovery"), one
+  in the HTTP/3-isn't-always-faster misconception's parenthetical list.
+  Both now say "independent ordering and delivery" / "removing
+  cross-stream head-of-line blocking," matching RFC 9000 §2's actual
+  guarantee and the correction already applied elsewhere in this
+  chapter — a reminder that fixing a phrase in one place doesn't fix it
+  everywhere it was typed.
+- Fifth-pass correction: the Packet-Journey Checkpoint's connection-
+  migration example (Wi-Fi access-point handoff) didn't actually
+  demonstrate the need for migration — roaming between access points on
+  one network commonly keeps the same IP address, in which case an
+  ordinary TCP connection survives too. Replaced with a Wi-Fi-to-
+  cellular handoff, which genuinely changes the client's address.
 - Fourth-pass deviation from blueprint.md §11: this chapter's Key
   Takeaway sentence has been edited from the blueprint's original
   verbatim wording ("...so it can evolve faster and isolate loss between

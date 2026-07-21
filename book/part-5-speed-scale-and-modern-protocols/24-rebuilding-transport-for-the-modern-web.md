@@ -63,7 +63,7 @@ sequenceDiagram
 
 ## Packet-Journey Checkpoint
 
-If `https://example.net/article`'s server supports HTTP/3, the café laptop's browser from Chapter 20 may negotiate QUIC instead of TCP-plus-TLS entirely, potentially completing the transport-and-security setup Chapters 14 and 18 described in a single combined exchange rather than two sequential ones, and — if the laptop's Wi-Fi later hands off between access points — continuing that same connection uninterrupted via connection migration rather than the browser needing to reconnect.
+If `https://example.net/article`'s server supports HTTP/3, the café laptop's browser from Chapter 20 may negotiate QUIC instead of TCP-plus-TLS entirely, potentially completing the transport-and-security setup Chapters 14 and 18 described in a single combined exchange rather than two sequential ones. And if the laptop later switches from the café's Wi-Fi to a cellular hotspot — genuinely changing its IP address, unlike simply roaming between access points on the same network, which often keeps the same address and wouldn't need migration at all — connection migration lets that same QUIC connection continue uninterrupted rather than forcing the browser to reconnect.
 
 ## Common Misconceptions
 
@@ -79,7 +79,7 @@ If `https://example.net/article`'s server supports HTTP/3, the café laptop's br
 
 **Why it's wrong:** Since QUIC reimplements transport from scratch, it can seem like it might have dropped less-visible mechanisms like congestion control along the way.
 
-**Correct intuition:** QUIC implements its own congestion control, conceptually similar in spirit to Chapter 15's TCP congestion control, still adapting to network conditions rather than sending without limit. That congestion control operates for the *connection as a whole* — one shared budget for how much unacknowledged data can be in flight across the whole path — not a separate independent budget per stream; streams get independent loss recovery (above), but they still share one connection's view of how congested the path currently is.
+**Correct intuition:** QUIC implements its own congestion control, conceptually similar in spirit to Chapter 15's TCP congestion control, still adapting to network conditions rather than sending without limit. That congestion control operates for the *connection as a whole* — one shared budget for how much unacknowledged data can be in flight across the whole path — not a separate independent budget per stream; streams get independent ordering and delivery (above), but they still share one connection's view of how congested the path currently is.
 
 **Analogy:** The shuttle service still has its own rules about how many vehicles it dispatches onto a congested road at once — running its own operation doesn't mean ignoring road conditions.
 
@@ -103,7 +103,7 @@ If `https://example.net/article`'s server supports HTTP/3, the café laptop's br
 
 **Why it's wrong:** As the newer protocol built to fix known problems, HTTP/3 sounds like a strict, universal upgrade.
 
-**Correct intuition:** On networks that block or deprioritize UDP traffic, or where round trips are already minimal, QUIC's specific advantages (migration, independent stream loss recovery, combined handshake) may deliver little or no visible benefit over well-tuned HTTP/2.
+**Correct intuition:** On networks that block or deprioritize UDP traffic, or where round trips are already minimal, QUIC's specific advantages (migration, removing cross-stream head-of-line blocking, combined handshake) may deliver little or no visible benefit over well-tuned HTTP/2.
 
 **Analogy:** A shuttle service's flexibility only helps on trips where road conditions actually change or vary — on a short, empty, predictable route, its advantages may hardly show at all.
 

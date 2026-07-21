@@ -7,6 +7,37 @@ Each chapter's own drafting pass should get an entry here.
 
 ### Fixed
 
+- Addressed a fifth-pass technical review's 8 remaining findings across
+  Chapters 12, 24, and 27, with an emphasis on consolidating rather than
+  further qualifying (per the review's own editorial note that some
+  passages were accumulating nested caveats): fixed two more stray
+  "independent loss recovery" phrases in Chapter 24's misconceptions,
+  and replaced its Packet-Journey Checkpoint's Wi-Fi-access-point-
+  roaming migration example (roaming often keeps the same IP, so
+  wouldn't need migration) with a genuine Wi-Fi-to-cellular handoff;
+  rewrote Chapter 27's Ingress/service-discovery explanation from
+  scratch rather than patching it further — Ingress configuration now
+  correctly declares a service by *name*, not a resolved address; the
+  chapter now distinguishes control-plane components (which watch
+  service health and program forwarding rules) from the data plane
+  (which just follows those rules per packet, doing no per-packet
+  lookup), instead of describing the data plane as "consulting" service
+  discovery directly; and the service-mesh Packet-Journey Checkpoint no
+  longer assumes every mesh terminates external TLS at a sidecar,
+  since that's a deployment choice, not a fixed property; fixed Chapter
+  12's "each client has a different source IP" claim, false behind NAT,
+  and its demultiplexing summary bullet, which still contradicted the
+  chapter's own corrected body text; and corrected two wrong RFC 9293
+  section citations in Chapter 12's references (§3.1 is TCP's header
+  format, not connection identity — §3.4.1/§4 and §3.10.1 are correct).
+  Updated `glossary.md` (service discovery) and 3
+  `references/chapter-NN.md` files with primary sources (RFC 9293
+  §3.4.1/§3.10.1, Kubernetes Ingress resource docs, ingress-nginx docs,
+  Istio ingress-gateway docs) backing each correction, including a
+  rationale entry for one prior suggestion (Chapter 27's "healthy" →
+  "ready") that was reviewed again and still not adopted. All four
+  structural validators still pass clean.
+
 - Addressed a fourth-pass technical review's 6 remaining findings across
   Chapters 12, 20, 24, and 27: fixed a What to Remember bullet in
   Chapter 12 that still stated the exact "every transport-layer packet

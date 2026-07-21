@@ -37,6 +37,13 @@ Per-chapter citation trail (blueprint.md §19).
   common controller pattern — the one this chapter's worked example and
   diagram follow — not the only way Ingress configuration gets
   implemented.
+- Kubernetes official documentation, *Ingress* — *The Ingress Resource*
+  section, specifically the `backend` field referencing a Service by
+  `name` and `port` — the source for this chapter's fifth-pass
+  correction that Ingress configuration declares a service *identity*
+  as its backend, not an address; resolving that identity to something
+  the controller can actually forward to is the controller's own job,
+  not something the Ingress object specifies.
 - Linux kernel `namespaces(7)` man page — the underlying OS mechanism
   implementing network namespaces.
 
@@ -60,6 +67,13 @@ Per-chapter citation trail (blueprint.md §19).
   architectures exist alongside the traditional per-pod sidecar model,
   both achieving the same uniform-control category through different
   proxy placement.
+- Istio's *Ingress Gateways* documentation — illustrates that external
+  TLS commonly terminates at a mesh's own gateway, with a separate
+  internal mTLS connection securing the hop onward to the workload; the
+  source for this chapter's fifth-pass correction to the Packet-Journey
+  Checkpoint, which previously assumed a sidecar always handles external
+  TLS termination directly — termination point and internal security are
+  separate deployment choices, not a fixed property of "using a mesh."
 
 ## Empirical claims
 
@@ -67,15 +81,26 @@ Per-chapter citation trail (blueprint.md §19).
 
 ## Known simplifications (may need later technical review)
 
-- "Service discovery" and "data plane" are described generically as
-  platform-internal directory-plus-forwarding machinery; Kubernetes'
-  specific implementation (kube-proxy modes — iptables, IPVS — or an
-  eBPF-based alternative, reconciling against the EndpointSlice API) is
-  not named or explained mechanically, per blueprint's "not a Linux
-  networking command cookbook" exclusion (§5). The chapter's corrected
-  model (DNS resolves to a stable virtual address; a separate data-plane
-  layer forwards to healthy endpoints) is the accurate shape of the
-  mechanism without committing to one implementation's internals.
+- "Service discovery," "control plane," and "data plane" are described
+  generically as platform-internal watch-plus-program-plus-forward
+  machinery; Kubernetes' specific implementation (kube-proxy modes —
+  iptables, IPVS — or an eBPF-based alternative, reconciling against the
+  EndpointSlice API) is not named or explained mechanically, per
+  blueprint's "not a Linux networking command cookbook" exclusion (§5).
+  Fifth-pass correction: the model here previously said "DNS resolves to
+  a stable virtual address; a separate data-plane layer forwards to
+  healthy endpoints," which conflated two things that needed separating
+  — an ingress controller commonly reads a service's address from the
+  platform's declared configuration/control-plane state directly, not
+  via a DNS lookup (DNS is how *other* internal callers typically reach
+  a service by name); and it's specifically the control plane that
+  watches service discovery and programs the data plane's rules, not
+  the data plane "consulting" discovery per packet. The corrected model
+  (control plane watches health, programs data-plane rules; data plane
+  forwards per-packet using those already-current rules; a service
+  address is obtained from declared config or DNS depending on the
+  caller) is the accurate shape of the mechanism without committing to
+  one implementation's internals.
 - "Pod" is introduced as this chapter's unit of network identity without
   fully deriving why a pod (rather than a container) is that unit — the
   container-runtime and scheduling reasons behind that design choice are
