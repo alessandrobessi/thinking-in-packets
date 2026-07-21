@@ -63,7 +63,7 @@ sequenceDiagram
 
 ## Packet-Journey Checkpoint
 
-If `https://example.net/article`'s server supports HTTP/3, the café laptop's browser from Chapter 20 may negotiate QUIC instead of TCP-plus-TLS entirely, potentially completing the transport-and-security setup Chapters 14 and 18 described in a single combined exchange rather than two sequential ones. And if the laptop later switches from the café's Wi-Fi to a cellular hotspot — genuinely changing its IP address, unlike simply roaming between access points on the same network, which often keeps the same address and wouldn't need migration at all — connection migration lets that same QUIC connection continue uninterrupted rather than forcing the browser to reconnect.
+If `https://example.net/article`'s server supports HTTP/3, the café laptop's browser from Chapter 20 may negotiate QUIC instead of TCP-plus-TLS entirely, potentially completing the transport-and-security setup Chapters 14 and 18 described in a single combined exchange rather than two sequential ones. And if the laptop later switches from the café's Wi-Fi to a cellular hotspot — genuinely changing its IP address, unlike simply roaming between access points on the same network, which often keeps the same address and wouldn't need migration at all — connection migration can preserve that same QUIC connection across the change rather than forcing the browser to reconnect, provided both ends support it and the new path checks out (a server can decline migration, and even when it works, the connection may briefly slow while it re-measures the new path's behavior).
 
 ## Common Misconceptions
 

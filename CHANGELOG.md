@@ -7,6 +7,32 @@ Each chapter's own drafting pass should get an entry here.
 
 ### Fixed
 
+- Addressed a sixth-pass technical review's 6 remaining findings across
+  Chapters 12, 24, and 27: fixed a stale "differs by client IP" sentence
+  in Chapter 12's one-client-per-port misconception (still assumed
+  distinct source IPs, false behind NAT); softened Chapter 24's QUIC
+  connection-migration checkpoint from an unconditional "continue
+  uninterrupted" to a capability ("can preserve... provided both ends
+  support it and the new path checks out," noting a server can decline
+  and a brief post-migration slowdown); and made three Chapter 27
+  corrections — reframing east-west and ingress/egress as different
+  dimensions (positional vs. directional-relative-to-a-named-boundary)
+  rather than mutually exclusive labels, since a single internal call is
+  east-west across the cluster *and* egress from its source pod *and*
+  ingress to its destination pod at once (the old framing would have
+  misled anyone writing Kubernetes NetworkPolicy, whose egress rules
+  select internal destinations); removing an unsupported per-packet
+  convergence timing guarantee ("forwarding rules already reflect it by
+  the time the next packet arrives") in favor of "continuous but not
+  instantaneous" with an explicit brief-window caveat; and fixing two
+  residual all-meshes-have-sidecars phrasings plus the Ingress diagram
+  label (the declared backend is a Service name/port, from which the
+  controller obtains an address — not the address itself). Updated
+  `glossary.md` (service discovery, from the fifth pass) and 2
+  `references/chapter-NN.md` files with primary sources (RFC 9000 §9/§9.4/§9.6,
+  Kubernetes NetworkPolicy docs) backing each correction. All four
+  structural validators still pass clean.
+
 - Addressed a fifth-pass technical review's 8 remaining findings across
   Chapters 12, 24, and 27, with an emphasis on consolidating rather than
   further qualifying (per the review's own editorial note that some

@@ -58,6 +58,20 @@ Per-chapter citation trail (blueprint.md §19).
   stated, but the underlying cryptographic mechanics (session tickets,
   PSK binders, anti-replay windows) are not explained — intuition level
   only, per blueprint scope.
+- Sixth-pass correction: the Packet-Journey Checkpoint previously said
+  migration "lets that same QUIC connection continue uninterrupted,"
+  which overstated an optional, negotiable capability. RFC 9000 §9
+  (Connection Migration) and §9.6 (`disable_active_migration` transport
+  parameter) establish that a peer can decline active migration, that
+  migration requires path validation (§8.2) and a usable non-zero-length
+  connection ID, and that congestion controller and RTT state are reset
+  for the new path (§9.4) — so migration is a capability QUIC "can" use
+  under the right conditions, not an unconditional guarantee, and can
+  carry a brief performance cost even when it succeeds. The checkpoint
+  now says "can preserve... provided both ends support it and the new
+  path checks out," with the reset noted as a possible brief slowdown.
+  The transport-parameter and path-validation mechanics themselves are
+  not explained, per blueprint scope.
 - QUIC congestion control is described as "conceptually similar in
   spirit" to TCP's without asserting a specific algorithm (e.g. CUBIC,
   BBR) is used, since QUIC implementations vary. Its connection-wide

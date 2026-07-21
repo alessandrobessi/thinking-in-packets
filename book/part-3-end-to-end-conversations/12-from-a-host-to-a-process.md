@@ -90,7 +90,7 @@ When the café laptop's browser goes to fetch `example.net`'s page, the operatin
 
 ### *A server can support only one client per listening port.*
 
-**Why it's wrong:** A listening port accepts connections from many different clients simultaneously; what keeps them distinct isn't the port, it's the full five-tuple, which differs by client IP (and often client port) even when the destination port is identical for all of them.
+**Why it's wrong:** A listening port accepts connections from many different clients simultaneously; what keeps them distinct isn't the port, it's the full five-tuple, which differs by source address, source port, or both — even when the server's own address and port are identical for all of them, and even when several clients reach the server through one shared NAT'd source address, since their source ports still differ.
 
 **Correct intuition:** Thousands of clients can be talking to a server's port 443 at once, each one a separate, fully distinguishable conversation.
 

@@ -113,6 +113,27 @@ Per-chapter citation trail (blueprint.md §19).
   one specific platform's exact API naming (Kubernetes' `Ingress` object
   is the concrete example, but the object/controller split generalizes to
   other platforms using different names).
+- Sixth-pass correction: the chapter previously framed "east-west" and
+  "egress" as mutually exclusive (an internal call was east-west and
+  therefore "not egress"). Corrected to treat them as different
+  dimensions — east-west is positional (between internal services),
+  ingress/egress is directional relative to a *named* boundary — so one
+  internal call is simultaneously east-west across the cluster, egress
+  from its source pod, and ingress to its destination pod. Kubernetes
+  NetworkPolicy (kubernetes.io/docs/concepts/services-networking/network-policies/)
+  is the concrete motivation: its `egress` rules select internal
+  destination pods/namespaces and routinely govern east-west
+  connections, so the old "egress = leaves the cluster" framing would
+  have actively misled a reader writing NetworkPolicy. The chapter now
+  insists the boundary be named explicitly rather than inferred from the
+  word "egress" alone.
+- Sixth-pass correction: the worked example previously guaranteed that
+  a crashed/replaced instance's change is reflected in forwarding rules
+  "by the time the next packet arrives." Kubernetes reconciliation
+  (Pods → EndpointSlices → every consuming proxy/data plane) is
+  asynchronous with no such per-packet timing guarantee; corrected to
+  "continuous but not instantaneous," with an explicit brief-window
+  caveat during which traffic can still hit an already-gone instance.
 - Ambient/sidecarless mesh architectures are named and distinguished from
   the traditional sidecar model at the conceptual level only — their
   actual mechanics (shared node-level proxies, per-pod traffic redirection
