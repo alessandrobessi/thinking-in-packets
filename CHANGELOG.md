@@ -5,6 +5,34 @@ Each chapter's own drafting pass should get an entry here.
 
 ## [Unreleased]
 
+### Changed
+
+- Editorial compression pass on the 7 chapters most reshaped by the six
+  technical-review rounds (Chapters 10, 12, 16, 20, 22, 24, 27), whose
+  word counts had grown well past the manuscript's ~2,100-word median
+  as each review's corrections and caveats accumulated in place. Cut
+  ~2,600 words (~8% of those chapters, concentrated on the worst
+  offenders — Ch. 27 alone dropped from 3,873 to ~3,040) by removing
+  duplicate explanations of the same point across a chapter's Worked
+  Example, Technical Explanation, Practical Implications, and What to
+  Remember (each review's fix had typically landed in only one of
+  these, but earlier passes sometimes re-explained the same nuance in
+  each in full rather than stating it once and pointing to it), and by
+  tightening dense multi-clause sentences into shorter ones. No
+  technical content, correction, or citation was removed — every fact
+  established across the review rounds is still stated somewhere in
+  each chapter, usually now in exactly one place instead of three or
+  four. Ran a manuscript-wide check for a "verbal tic" concern raised
+  alongside the compression request (density of "actually" / "exactly"
+  / "genuinely"); found the 7 compressed chapters now sit at or below
+  the manuscript's median density as a side effect of the cut, and
+  that the chapters with the highest density (28-30, none touched by
+  technical review) use those words load-bearingly — distinguishing a
+  real property from an apparent one, the book's consistent rhetorical
+  method — not as filler, so left them alone rather than editing
+  against the numbers. All four structural validators still pass
+  clean.
+
 ### Fixed
 
 - Addressed a sixth-pass technical review's 6 remaining findings across
