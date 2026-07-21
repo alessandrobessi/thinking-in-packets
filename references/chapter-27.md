@@ -134,6 +134,24 @@ Per-chapter citation trail (blueprint.md §19).
   asynchronous with no such per-packet timing guarantee; corrected to
   "continuous but not instantaneous," with an explicit brief-window
   caveat during which traffic can still hit an already-gone instance.
+- Compression-regression correction: the editorial pass's rewrite of
+  the "Kubernetes Service is a permanently running proxy" misconception
+  dropped the scoping this chapter's own headless-service treatment
+  requires — it described *every* Service as "a stable virtual address
+  plus a live record of health," which is only true of an ordinary
+  (ClusterIP) Service and contradicts the chapter's own headless-service
+  paragraph a few sections earlier (Kubernetes official docs, *Service*
+  — *Headless Services*, already cited above; `ExternalName` Services,
+  which perform DNS redirection rather than endpoint forwarding, exist
+  too but aren't otherwise discussed in this chapter). Corrected to
+  scope the claim to "an ordinary Service (this chapter's running
+  case)" and name the headless exception inline rather than relying on
+  the reader to recall it from earlier. Also switched "healthy" to
+  "eligible" in this one misconception box, since Kubernetes' own
+  readiness/eligibility for Service traffic is a narrower, more precise
+  claim than general health — a scoped, local change, not a reversal of
+  the earlier decision to keep "healthy" as this chapter's general term
+  (still used everywhere else, matching Chapter 22's vocabulary).
 - Ambient/sidecarless mesh architectures are named and distinguished from
   the traditional sidecar model at the conceptual level only — their
   actual mechanics (shared node-level proxies, per-pod traffic redirection

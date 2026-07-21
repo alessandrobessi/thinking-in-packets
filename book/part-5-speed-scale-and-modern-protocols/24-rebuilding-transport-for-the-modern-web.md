@@ -36,7 +36,7 @@ QUIC solves two problems TCP structurally cannot, without waiting for TCP itself
 
 ## Technical Explanation
 
-**QUIC** is a transport protocol (RFC 9000) commonly implemented as **user-space transport**: rather than living in the operating-system kernel the way TCP traditionally does, its logic runs in an ordinary application library, using UDP (Chapter 13) purely as a substrate to build reliability, ordering, and congestion control on top of. Nothing in the specification requires user space — a kernel implementation is possible — but building on UDP is what makes user space practical, which is how QUIC is deployed almost everywhere. This is also why "QUIC uses UDP" isn't evidence of unreliability: UDP is just the raw material QUIC uses to reimplement everything TCP provides and more, in software that can be updated one application at a time, without kernel or router changes.
+**QUIC** is a transport protocol (RFC 9000) commonly implemented as **user-space transport**: rather than living in the operating-system kernel the way TCP traditionally does, its logic runs in an ordinary application library, using UDP (Chapter 13) purely as a substrate to build reliable delivery, per-stream ordering, and congestion control on top of. Nothing in the specification requires user space — a kernel implementation is possible — but building on UDP is what makes user space practical, which is how QUIC is deployed almost everywhere. This is also why "QUIC uses UDP" isn't evidence of unreliability: UDP is just the raw material QUIC uses to reimplement everything TCP provides and more, in software that can be updated one application at a time, without kernel or router changes.
 
 QUIC identifies a connection using a **connection ID** — a value chosen by the endpoints themselves — rather than the traditional IP-and-port tuple TCP relies on. Because this identifier survives an IP address change, QUIC supports **connection migration**: an ongoing connection can continue across a network transition (Wi-Fi to cellular, one Wi-Fi network to another) without being torn down and rebuilt, exactly the capability the worked example's phone call depended on.
 
@@ -117,10 +117,9 @@ When a product claims to use QUIC or HTTP/3, the concrete benefits to expect are
 
 ## What to Remember
 
-- TCP's deep kernel-level deployment makes it slow to evolve; QUIC sidesteps this by running as user-space software over UDP.
+- TCP's deep kernel-level deployment makes it slow to evolve; QUIC commonly sidesteps this by being implemented as user-space software over UDP — a deployment choice UDP makes practical, not a strict requirement of the specification itself.
 - QUIC identifies connections by a connection ID, not IP address and port, enabling connection migration across network changes.
-- QUIC's streams have independent delivery order, so a stream with no data in a lost packet is never blocked behind another stream's specific missing bytes — though loss detection and congestion response happen at the connection level, one lost QUIC packet can still carry frames from more than one stream at once, and a shrinking shared congestion window after loss can briefly slow every stream's sending rate, unrelated streams included.
-- QUIC is commonly implemented as user-space software over UDP, but that's a deployment choice UDP makes practical, not a strict requirement of the QUIC specification itself.
+- QUIC's streams have independent per-stream ordering and delivery, so a stream with no data in a lost packet is never blocked behind another stream's specific missing bytes — though loss detection and congestion response happen at the connection level, one lost QUIC packet can still carry frames from more than one stream at once, and a shrinking shared congestion window after loss can briefly slow every stream's sending rate, unrelated streams included.
 - QUIC integrates TLS 1.3 into its own handshake and encrypts most transport metadata, not just application payload.
 - Zero-round-trip resumption can let a returning client send data immediately, under specific prior-connection conditions — but that first flight of data is more vulnerable to replay, so applications restrict what it's used for.
 - HTTP/3 is HTTP's multiplexed-streams model running over QUIC instead of TCP.

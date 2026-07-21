@@ -60,3 +60,12 @@ Per-chapter citation trail (blueprint.md §19).
   (this chapter's running case), noting that load balancers distributing
   traffic across heterogeneous or partitioned backends are a different,
   unnamed-here pattern that doesn't presuppose replication.
+- Compression-regression correction: the health-check definition's
+  compressed wording ("pulls a failing or overloaded backend from
+  rotation") stated as fact that a health check successfully detects
+  overload, contradicting the chapter's own "A healthy process
+  guarantees a healthy user experience" misconception a few sections
+  later, which explains a shallow check can miss exactly that. Corrected
+  the definition to say a backend is pulled when the probe *judges* it
+  unfit, with an explicit pointer to the misconception rather than
+  re-explaining the limitation twice.

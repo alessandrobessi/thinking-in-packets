@@ -13,6 +13,7 @@ Per-chapter citation trail (blueprint.md §19).
 - RFC 894, *A Standard for the Transmission of IP Datagrams over Ethernet Networks* — illustrates that a 1500-byte Ethernet MTU describes the IP datagram's maximum size, with the Ethernet frame itself (header plus that payload) being correspondingly larger.
 - RFC 4732, *Internet Denial-of-Service Considerations* §3 — background on ICMP rate-limiting as deliberate router/OS behavior, cited for this chapter's correction that ICMP generation is neither universal nor guaranteed to arrive.
 - RFC 1812 §4.3.2.7 — router requirements around silently discarding packets under queue exhaustion, the source for this chapter's added third worked-example case (congestion-caused loss produces no ICMP message).
+- RFC 791 §3.2 / RFC 8200 §4 (already cited above) — TTL/Hop Limit is defined and decremented per hop traversed, not per unit of elapsed time; the source for a compression-regression correction below.
 
 ## Historical sources
 
@@ -27,3 +28,4 @@ Per-chapter citation trail (blueprint.md §19).
 - The chapter does not cover IPv4 fragmentation's specific security/performance drawbacks (a real, well-documented motivation for IPv6's design choice) in technical depth — only the behavioral difference itself.
 - "Black-holed" Path MTU Discovery (where ICMP is filtered so thoroughly that neither fragmentation nor a proper error ever occurs) is mentioned only implicitly under Practical Implications, not as its own named failure mode.
 - The chapter's correction (congestion-caused packet loss generates no ICMP message, and even well-defined ICMP cases can be rate-limited or filtered) stays qualitative — no specific rate-limiting thresholds or vendor defaults are cited, consistent with blueprint §19's caution against overstating precision.
+- Compression-regression correction: the routing-loop worked example's phrase "a legitimate but slow-to-arrive packet" implied TTL expiry is chiefly about elapsed travel time, when it's actually a per-hop counter, indifferent to how long any individual hop took — corrected to name the hop-count mechanism explicitly. The Packet-Journey Checkpoint separately re-acquired an unqualified "would... report the failure back to the laptop," restating as fact the same ICMP-isn't-guaranteed point the Technical Explanation and Worked Example both already carefully hedge — corrected to distinguish the loop being bounded (reliable) from the sender being told why (not reliable), with an explicit pointer back to the Technical Explanation rather than re-arguing it.

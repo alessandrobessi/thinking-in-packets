@@ -82,7 +82,7 @@ If `example.net`'s article service runs on a container platform, the café lapto
 
 **Why it's wrong:** "Service" sounds like it should name one continuously running piece of software actually handling traffic.
 
-**Correct intuition:** A Service is continuously-programmed state — a stable virtual address plus a live record of which instances are healthy — not a running process. A control plane watches that record and programs the data plane's forwarding rules; the data plane forwards using them. (An application-layer proxy in front of the Service can add per-request selection, but that's the proxy's doing, not the Service's.)
+**Correct intuition:** An ordinary Service (this chapter's running case) is continuously-programmed state — a stable virtual address plus a live record of which instances are eligible — not a running process. A control plane watches that record and programs the data plane's forwarding rules; the data plane forwards using them. (A headless service, this chapter's own deliberate exception, skips the virtual address entirely; an application-layer proxy in front of an ordinary Service can add per-request selection, but that's the proxy's doing, not the Service's.)
 
 **Analogy:** The phone system's forwarding record isn't itself a person answering calls — it's the continuously updated instruction for where to send them.
 

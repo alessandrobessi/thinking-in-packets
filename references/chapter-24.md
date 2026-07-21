@@ -119,3 +119,17 @@ Per-chapter citation trail (blueprint.md §19).
   manuscript altered from its blueprint source; style-guide.md §2's
   "match blueprint.md §11" rule should be read as taking a back seat to
   technical accuracy in cases like this one.
+- Compression-regression correction: the editorial pass merged two
+  What to Remember bullets and, in doing so, reintroduced an
+  unconditional "QUIC sidesteps this by running as user-space software
+  over UDP" — directly contradicting the "commonly implemented... not a
+  strict requirement" correction sitting two bullets below it before
+  the merge. Fixed by folding the "commonly"/"deployment choice"
+  qualifier into the merged bullet itself rather than leaving it in a
+  separate one a reader could miss. Also tightened the Technical
+  Explanation's "reliability, ordering, and congestion control" to
+  "reliable delivery, per-stream ordering, and congestion control" —
+  unqualified "ordering" undersold the chapter's actual point (that
+  QUIC's ordering is per-stream, not one connection-wide order the way
+  TCP's is), a precision this compression pass had accidentally
+  softened.

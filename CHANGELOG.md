@@ -5,6 +5,41 @@ Each chapter's own drafting pass should get an entry here.
 
 ## [Unreleased]
 
+### Fixed
+
+- Addressed a post-compression technical review's 4 substantive
+  findings plus 3 minor cleanups across Chapters 10, 12, 16, 22, and
+  24: the compression pass had, in three cases, cut a scope qualifier
+  along with the surrounding prose it was trimming, turning a correctly
+  narrow claim into an overclaim. Restored Chapter 12's "ports are a
+  UDP/TCP thing" to the correct "UDP and TCP, the two protocols this
+  book covers, use ports" (other transport protocols like SCTP and DCCP
+  also use ports; the original scoping had been lost in compression);
+  fixed Chapter 24's merged What to Remember bullet, which had
+  reintroduced an unconditional "QUIC... running as user-space
+  software," directly contradicting the "commonly, not a requirement"
+  correction two bullets below it before the merge; and fixed Chapter
+  27's Service misconception, which now described *every* Kubernetes
+  Service as having a virtual address, contradicting the chapter's own
+  headless-service exception a few sections earlier. Also fixed two
+  pre-existing Chapter 10 issues the compression pass didn't touch but
+  a closer read caught: the routing-loop worked example implied TTL
+  expiry is chiefly about elapsed travel time (it's a per-hop counter,
+  indifferent to time), and the Packet-Journey Checkpoint restated "the
+  hop limit... would report the failure back to the laptop" as
+  unqualified fact, contradicting the chapter's own point that ICMP
+  delivery isn't guaranteed. Plus three minor cleanups: a grammatical
+  "A envelope" → "An envelope" and an ambiguous "the server" → "the VPN
+  server" in Chapter 16, and Chapter 22's health-check definition
+  softened so it no longer states as fact that a probe always catches
+  overload (contradicting its own "healthy process" misconception a few
+  sections later). Also tightened Chapter 24's "reliability, ordering,
+  and congestion control" to "reliable delivery, per-stream ordering,
+  and congestion control" — the unqualified version undersold the
+  chapter's central point. Updated 6 `references/chapter-NN.md` files
+  documenting each regression and its fix. All four structural
+  validators still pass clean.
+
 ### Changed
 
 - Editorial compression pass on the 7 chapters most reshaped by the six
